@@ -1,54 +1,38 @@
-# React + TypeScript + Vite
+# Front End NFL Fantasy Draft Game
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+# P2 Proposal
 
-Currently, two official plugins are available:
+## Team name: FullStack Tech Champs
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Project Name
 
-## Expanding the ESLint configuration
+## Project description
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+For project 2, we will create a fantasy football app where the user plays against a bot that uses the Open AI API to choose its players. Users can create a team of real life athletes using data from a fantasy sports API. Each team is then ranked based on how well their players perform on the field. The team with the highest standing (ranking) for that season wins. The backend will use Java, the Spring Framework and PostgreSQL, and the front-end will use Typescript and React. JUnit and Mockito for testing and AWS.
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+## Whos working on what (frontend, backend, devOps)
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+- Front-end: Dharun, Ayotunde
+- Back-end: Shanjhitha, Cesaire
+- DevOps: Mark
+- Scrum Master: Shanjhitha
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## MVP user stories
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+- User Story 1: Sign up with email to make it easy to sign in
+- Create a team with 5 players (user can only have 1 team) (the computer creates an open AI API user), and the open API uses LLM to choose players
+- User can add/draft athletes to their team, and this happens by random chance.
+- User plays a game against the computer. Start the season, which lasts 18 weeks, there's 10 seconds per week, Every 10 seconds (1 week passes)
+- At the end of the season it shows a winner, whoever won gets the money.
+
+<imp src="P2-Design-Diagrams">
+
+## External API you're using
+
+We'll be using the NFL API from SportsDataIO, and the Open AI API
+
+## ERD
+
+- Users table: username, password, role
+- Teams: team_id, name, qb_id, kicker_id, running_back_id, tide_end_id, wide_receiver_id
+- Player (real life athletes)
