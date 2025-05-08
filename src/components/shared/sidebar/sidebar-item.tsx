@@ -11,8 +11,8 @@ interface SidebarItemProps {
 
 export const SidebarItem = ({ label, icon: Icon, href }: SidebarItemProps) => {
   return (
-    <div>
-        <Button className="w-full flex justify-start text-base" variant={"ghost"} asChild>
+    <div className="mb-3">
+        <Button className="w-full flex justify-start text-base bg-green-400" variant={"outline"} asChild>
           <Link to={href}>
             <Icon className="size-6 mr-2"></Icon>
             {label}

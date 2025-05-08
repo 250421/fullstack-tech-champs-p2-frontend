@@ -1,4 +1,4 @@
-import { Sidebar } from "lucide-react";
+import { Menu} from "lucide-react";
 import React from "react";
 
 import { useSidebar } from "@/hooks/use-sidebar";
@@ -23,8 +23,8 @@ export const SidebarMainWrapper = ({ children }: SidebarMainWrapperProps) => {
         size={"icon"}
         onClick={toggle}
         className="fixed mx-3 top-20 z-50 cursor-pointer"
-      >
-        <Sidebar />
+      ><Menu className="h-6 w-6" />
+        
       </Button>
       {children}
     </div>
