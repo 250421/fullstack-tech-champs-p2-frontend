@@ -1,9 +1,9 @@
 import { useMutation } from "@tanstack/react-query"
-import type { RegisterSchemaType } from "../schemas/register-schema";
 import { axiosInstance } from "@/lib/axios-config"
 import { AxiosError } from "axios";
 import { toast } from "sonner";
 import { useNavigate } from "@tanstack/react-router";
+import type { RegisterSchemaType } from "../schemas/register-schema";
 
 console.log("VITE_API_URL:", import.meta.env.VITE_API_URL);
 export const useRegister =() => {

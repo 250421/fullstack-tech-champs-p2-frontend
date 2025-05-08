@@ -12,12 +12,10 @@ export const Route = createRootRoute({
 const RootLayout = () =>{
   const queryClient = new QueryClient()
   return(
-    <div>
-      <QueryClientProvider client={queryClient}>
-          <Outlet/>
-           <Toaster />
-      </QueryClientProvider>
-      
-    </div>
+    <>
+    <QueryClientProvider client={queryClient}>
+      <Outlet/>
+    </QueryClientProvider>
+    </>
   )
 }
