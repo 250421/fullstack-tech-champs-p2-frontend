@@ -15,8 +15,11 @@ export const useLogin =() =>{
 
         },
         onSuccess: ()=>{
-            toast.success("User Logged In");
+            toast.success("User Logged In",{
+                duration: 2000,
+            });
             navigate({to:"/"});
+            toast.success("User Logged In");
         },
         onError: (error) =>{
             console.error(error);

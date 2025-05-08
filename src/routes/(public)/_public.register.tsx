@@ -15,15 +15,11 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
-import { LoginSchema, type LoginSchemaType } from '@/features/auth/schemas/login-schema'
+
 import { Input } from '@/components/ui/input'
 import { useRegister } from '@/features/auth/hook/useRegister'
 import { Loader2 } from 'lucide-react'
-import type { RegisterSchemaType } from '@/features/auth/schemas/register-schema'
-
-
-
-
+import { RegisterSchema, type RegisterSchemaType } from '@/features/auth/schemas/register-schema'
 
 export const Route = createFileRoute('/(public)/_public/register')({
   component: RegisterPage,
@@ -34,7 +30,7 @@ function RegisterPage() {
   const{mutate:createNewUser, isPending} = useRegister();
   
     const form = useForm<RegisterSchemaType>({
-      resolver: zodResolver(LoginSchema),
+      resolver: zodResolver(RegisterSchema),
       defaultValues: {
         username: "",
         password:"",
@@ -50,11 +46,11 @@ function RegisterPage() {
     return (
       <>
       <div className="min-h-screen flex items-center justify-center p-4 relative">
-        <div className="fixed inset-0 z-0 bg-cover bg-center opacity-90" 
+        <div className="fixed inset-0 z-0 bg-cover bg-center opacity-100" 
             style={{ backgroundImage: "url('https://images.unsplash.com/photo-1566577739112-5180d4bf9390?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&h=1080')" }}>
         </div>
         
-        <Card className="w-full max-w-md z-10 bg-gray-900 shadow-xl border-0" >
+        <Card className="w-full max-w-md z-10 bg-gray-900 shadow-xl border-0 opacity-90" >
           <CardContent className="pt-6">
           <div className="flex justify-center mb-6">
             <svg className="h-20 text-green-400" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -69,6 +65,7 @@ function RegisterPage() {
           </div>
             <h1 className="text-3xl text-white font-bold text-center mb-6">Fantasy NFL</h1>
             <h1 className="text-2xl text-white font-bold text-center mb-6">Register</h1>
+            
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                 <FormField
