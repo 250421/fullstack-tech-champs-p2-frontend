@@ -23,7 +23,7 @@ export const useMyTeam = () => {
   const { data: team, isLoading, isError } = useQuery<Team>({
     queryKey: ['myTeam'],
     queryFn: async () => {
-      const response = await axiosInstance.get('/api/teams/my-team')
+      const response = await axiosInstance.get('/link/data')
       return response.data
     },
   })

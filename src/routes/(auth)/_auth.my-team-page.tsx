@@ -1,4 +1,4 @@
-// src/routes/(auth)/_auth/my-team-page.tsx
+
 import { createFileRoute } from '@tanstack/react-router'
 import { Button } from '@/components/ui/button'
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/card'
