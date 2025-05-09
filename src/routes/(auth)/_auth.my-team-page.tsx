@@ -30,13 +30,13 @@ function TeamPage() {
     )
   }
 
-  if (isError) {
-    return (
-      <div className="text-center py-10 text-red-500">
-        Failed to load team data. Please try again later.
-      </div>
-    )
-  }
+  // if (isError) {
+  //   return (
+  //     <div className="text-center py-10 text-red-500">
+  //       Failed to load team data. Please try again later.
+  //     </div>
+  //   )
+  // }
 
   if (!team || team.players.length === 0) {
     return (

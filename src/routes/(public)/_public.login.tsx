@@ -35,6 +35,7 @@ function LoginPage() {
       resolver: zodResolver(LoginSchema),
       defaultValues: {
         username: "",
+        email:"",
         password:"",
       },
     });
@@ -79,6 +80,24 @@ function LoginPage() {
                           placeholder="Enter your username" 
                           {...field} 
                           className="bg-card border border-gray-700 bg-black focus:ring-primary text-white"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem className="space-y-2 text-white">
+                      <FormLabel className="text-xl">Email</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="email" 
+                          placeholder="Enter your email address" 
+                          {...field} 
+                          className="bg-card border bg-black text-white border-gray-700 focus:ring-primary"
                         />
                       </FormControl>
                       <FormMessage />
