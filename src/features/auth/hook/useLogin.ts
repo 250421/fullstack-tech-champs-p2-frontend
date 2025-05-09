@@ -15,9 +15,7 @@ export const useLogin =() =>{
 
         },
         onSuccess: ()=>{
-            toast.success("User Logged In",{
-                duration: 2000,
-            });
+            toast.success("User Logged In")
             navigate({to:"/"});
             toast.success("User Logged In");
         },

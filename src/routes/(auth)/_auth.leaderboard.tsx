@@ -67,13 +67,13 @@ function LeaderboardPage() {
             setSelectedWeek(value === 'all' ? undefined : parseInt(value))
           }}
         >
-          <SelectTrigger>
+          <SelectTrigger className='text-white bg-gray-800'>
             <SelectValue placeholder="Filter by week" />
           </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Weeks</SelectItem>
+          <SelectContent className='bg-gray-800'>
+            <SelectItem value="all" className="text-white">All Weeks</SelectItem>
             {Array.from({ length: 18 }, (_, i) => i + 1).map((week) => (
-              <SelectItem key={week} value={week.toString()}>
+              <SelectItem key={week} value={week.toString()} className='bg-gray-800 text-white'>
                 Week {week}
               </SelectItem>
             ))}
@@ -81,19 +81,19 @@ function LeaderboardPage() {
         </Select>
       </div>
 
-      <div className="rounded-md border">
+      <div className="rounded-md border bg-gray-800">
         <Table>
-          <TableCaption>
+          <TableCaption className='text-white py-2'>
             {selectedWeek
               ? `Leaderboard for Week ${selectedWeek}`
               : 'Overall Season Leaderboard'}
           </TableCaption>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[100px]">Rank</TableHead>
-              <TableHead>Team Name</TableHead>
-              <TableHead>W-L-T</TableHead>
-              <TableHead className="text-right">Points</TableHead>
+              <TableHead className="w-[100px] text-white">Rank</TableHead>
+              <TableHead className="text-white">Team Name</TableHead>
+              <TableHead className='text-white'>Wins - Losses - Total</TableHead>
+              <TableHead className="text-right text-white">Points</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -119,7 +119,7 @@ function LeaderboardPage() {
                 <TableRow
                   key={team.id}
                   className={
-                    currentUserTeam?.id === team.id ? 'bg-secondary' : ''
+                    currentUserTeam?.id === team.id ? 'bg-secondary ' : ''
                   }
                 >
                   <TableCell className="font-medium">#{team.rank}</TableCell>
