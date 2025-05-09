@@ -12,7 +12,7 @@ export const AppSidebar = () => {
       <SidebarContent>
         <SidebarGroup>
         <SidebarItem label={"Dashboard"} icon={Home} href={"/"}  />
-          <SidebarItem label={"Create Team"} icon={CreditCardIcon} href={"/team"} />
+          <SidebarItem label={"Create Team"} icon={CreditCardIcon} href={"/createteam"} />
           <SidebarItem label={"Players"} icon={View} href={"/player"} />
         </SidebarGroup>
       </SidebarContent>
