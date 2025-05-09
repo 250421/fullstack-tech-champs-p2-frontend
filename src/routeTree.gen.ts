@@ -18,6 +18,7 @@ import { Route as authAuthImport } from './routes/(auth)/_auth'
 import { Route as authAuthIndexImport } from './routes/(auth)/_auth.index'
 import { Route as publicPublicRegisterImport } from './routes/(public)/_public.register'
 import { Route as publicPublicLoginImport } from './routes/(public)/_public.login'
+import { Route as authAuthMyTeamPageImport } from './routes/(auth)/_auth.my-team-page'
 import { Route as authAuthMatchHistoryImport } from './routes/(auth)/_auth.match-history'
 import { Route as authAuthLeaderboardImport } from './routes/(auth)/_auth.leaderboard'
 import { Route as authAuthCreateTeamImport } from './routes/(auth)/_auth.create-team'
@@ -65,6 +66,12 @@ const publicPublicLoginRoute = publicPublicLoginImport.update({
   id: '/login',
   path: '/login',
   getParentRoute: () => publicPublicRoute,
+} as any)
+
+const authAuthMyTeamPageRoute = authAuthMyTeamPageImport.update({
+  id: '/my-team-page',
+  path: '/my-team-page',
+  getParentRoute: () => authAuthRoute,
 } as any)
 
 const authAuthMatchHistoryRoute = authAuthMatchHistoryImport.update({
@@ -138,6 +145,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authAuthMatchHistoryImport
       parentRoute: typeof authAuthImport
     }
+    '/(auth)/_auth/my-team-page': {
+      id: '/(auth)/_auth/my-team-page'
+      path: '/my-team-page'
+      fullPath: '/my-team-page'
+      preLoaderRoute: typeof authAuthMyTeamPageImport
+      parentRoute: typeof authAuthImport
+    }
     '/(public)/_public/login': {
       id: '/(public)/_public/login'
       path: '/login'
@@ -168,6 +182,7 @@ interface authAuthRouteChildren {
   authAuthCreateTeamRoute: typeof authAuthCreateTeamRoute
   authAuthLeaderboardRoute: typeof authAuthLeaderboardRoute
   authAuthMatchHistoryRoute: typeof authAuthMatchHistoryRoute
+  authAuthMyTeamPageRoute: typeof authAuthMyTeamPageRoute
   authAuthIndexRoute: typeof authAuthIndexRoute
 }
 
@@ -175,6 +190,7 @@ const authAuthRouteChildren: authAuthRouteChildren = {
   authAuthCreateTeamRoute: authAuthCreateTeamRoute,
   authAuthLeaderboardRoute: authAuthLeaderboardRoute,
   authAuthMatchHistoryRoute: authAuthMatchHistoryRoute,
+  authAuthMyTeamPageRoute: authAuthMyTeamPageRoute,
   authAuthIndexRoute: authAuthIndexRoute,
 }
 
@@ -222,6 +238,7 @@ export interface FileRoutesByFullPath {
   '/create-team': typeof authAuthCreateTeamRoute
   '/leaderboard': typeof authAuthLeaderboardRoute
   '/match-history': typeof authAuthMatchHistoryRoute
+  '/my-team-page': typeof authAuthMyTeamPageRoute
   '/login': typeof publicPublicLoginRoute
   '/register': typeof publicPublicRegisterRoute
 }
@@ -231,6 +248,7 @@ export interface FileRoutesByTo {
   '/create-team': typeof authAuthCreateTeamRoute
   '/leaderboard': typeof authAuthLeaderboardRoute
   '/match-history': typeof authAuthMatchHistoryRoute
+  '/my-team-page': typeof authAuthMyTeamPageRoute
   '/login': typeof publicPublicLoginRoute
   '/register': typeof publicPublicRegisterRoute
 }
@@ -244,6 +262,7 @@ export interface FileRoutesById {
   '/(auth)/_auth/create-team': typeof authAuthCreateTeamRoute
   '/(auth)/_auth/leaderboard': typeof authAuthLeaderboardRoute
   '/(auth)/_auth/match-history': typeof authAuthMatchHistoryRoute
+  '/(auth)/_auth/my-team-page': typeof authAuthMyTeamPageRoute
   '/(public)/_public/login': typeof publicPublicLoginRoute
   '/(public)/_public/register': typeof publicPublicRegisterRoute
   '/(auth)/_auth/': typeof authAuthIndexRoute
@@ -256,6 +275,7 @@ export interface FileRouteTypes {
     | '/create-team'
     | '/leaderboard'
     | '/match-history'
+    | '/my-team-page'
     | '/login'
     | '/register'
   fileRoutesByTo: FileRoutesByTo
@@ -264,6 +284,7 @@ export interface FileRouteTypes {
     | '/create-team'
     | '/leaderboard'
     | '/match-history'
+    | '/my-team-page'
     | '/login'
     | '/register'
   id:
@@ -275,6 +296,7 @@ export interface FileRouteTypes {
     | '/(auth)/_auth/create-team'
     | '/(auth)/_auth/leaderboard'
     | '/(auth)/_auth/match-history'
+    | '/(auth)/_auth/my-team-page'
     | '/(public)/_public/login'
     | '/(public)/_public/register'
     | '/(auth)/_auth/'
@@ -318,6 +340,7 @@ export const routeTree = rootRoute
         "/(auth)/_auth/create-team",
         "/(auth)/_auth/leaderboard",
         "/(auth)/_auth/match-history",
+        "/(auth)/_auth/my-team-page",
         "/(auth)/_auth/"
       ]
     },
@@ -345,6 +368,10 @@ export const routeTree = rootRoute
     },
     "/(auth)/_auth/match-history": {
       "filePath": "(auth)/_auth.match-history.tsx",
+      "parent": "/(auth)/_auth"
+    },
+    "/(auth)/_auth/my-team-page": {
+      "filePath": "(auth)/_auth.my-team-page.tsx",
       "parent": "/(auth)/_auth"
     },
     "/(public)/_public/login": {
