@@ -10,7 +10,7 @@ export const useLogin =() =>{
     const navigate = useNavigate();
     return useMutation({
         mutationFn: async (values:LoginSchemaType)=>{
-            const res = await axiosInstance.post("/link/login",values);
+            const res = await axiosInstance.post("/api/users/login",values);
             return res.data;
 
         },

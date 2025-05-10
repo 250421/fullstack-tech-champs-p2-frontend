@@ -34,8 +34,7 @@ function LoginPage() {
     const form = useForm<LoginSchemaType>({
       resolver: zodResolver(LoginSchema),
       defaultValues: {
-        username: "",
-        email:"",
+        email: "",
         password:"",
       },
     });
@@ -71,33 +70,15 @@ function LoginPage() {
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                 <FormField
                   control={form.control}
-                  name="username"
-                  render={({ field }) => (
-                    <FormItem className="space-y-2  text-white">
-                      <FormLabel className="text-xl">Username</FormLabel>
-                      <FormControl>
-                        <Input 
-                          placeholder="Enter your username" 
-                          {...field} 
-                          className="bg-card border border-gray-700 bg-black focus:ring-primary text-white"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
                   name="email"
                   render={({ field }) => (
-                    <FormItem className="space-y-2 text-white">
-                      <FormLabel className="text-xl">Email</FormLabel>
+                    <FormItem className="space-y-2  text-white">
+                      <FormLabel className="text-xl">Email Address</FormLabel>
                       <FormControl>
                         <Input 
-                          type="email" 
-                          placeholder="Enter your email address" 
+                          placeholder="Enter your Email Address" 
                           {...field} 
-                          className="bg-card border bg-black text-white border-gray-700 focus:ring-primary"
+                          className="bg-card border border-gray-700 bg-black focus:ring-primary text-white"
                         />
                       </FormControl>
                       <FormMessage />
