@@ -7,7 +7,7 @@ interface User {
   email: string;
   password:string;
   role:string;
-  // Add other fields from your backend User DTO
+ 
 }
 
 interface AuthError {
@@ -18,7 +18,7 @@ interface AuthError {
 
 export const useAuth = () => {
   return useQuery<User | null, AuthError>({
-    queryKey: ["auth"], // Changed from "link" to more semantic key
+    queryKey: ["auth"], 
     queryFn: async () => {
       try {
         console.debug("[useAuth] Fetching user data...");
@@ -26,23 +26,13 @@ export const useAuth = () => {
         console.debug("[useAuth] Authentication successful", response.data);
         return response.data;
       } catch (error: any) {
-        // Error is already logged by axiosInstance interceptor
-        // Just add auth-specific handling here if needed
-        
-        // The interceptor already handles:
-        // - Token cleanup
-        // - Redirects on auth failures
-        // - Network error logging
-        
         return null;
       }
     },
-    staleTime: 1000 * 60 * 5, // 5 minutes cache
-    retry: false, // Important for auth queries
-    refetchOnWindowFocus: false, // Reduce unnecessary requests
+    staleTime: 1000 * 60 * 5, 
+    retry: false, 
+    refetchOnWindowFocus: false, 
     
   });
 };
 
-// Usage example:
-// const { data: user, isLoading, error } = useAuth();
