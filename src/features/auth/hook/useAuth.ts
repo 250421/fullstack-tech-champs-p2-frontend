@@ -7,11 +7,6 @@ interface User {
   email: string;
   password:string;
   role:string;
-<<<<<<< HEAD
- 
-=======
-  
->>>>>>> 40fa4da1a98118ed204b10736978028a5b4d20e6
 }
 
 interface AuthError {
@@ -30,10 +25,6 @@ export const useAuth = () => {
         console.debug("[useAuth] Authentication successful", response.data);
         return response.data;
       } catch (error: any) {
-<<<<<<< HEAD
-=======
-    
->>>>>>> 40fa4da1a98118ed204b10736978028a5b4d20e6
         return null;
       }
     },
