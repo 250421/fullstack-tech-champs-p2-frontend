@@ -1,16 +1,16 @@
 import axios from "axios";
-// You may need to install jwt-decode package if not already installed
+
 import { jwtDecode } from "jwt-decode";
-// ================== AXIOS INSTANCE ==================
+
 export const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
   headers: {
     "Content-Type": "application/json",
   },
-  withCredentials: true, // Needed for session cookies (if applicable)
+  withCredentials: true, 
 });
 
-// ================== REQUEST INTERCEPTOR ==================
+
 axiosInstance.interceptors.request.use(
   (config) => {
     try {
@@ -19,12 +19,12 @@ axiosInstance.interceptors.request.use(
       console.debug("[Axios] Making request to:", config.url);
 
       if (token) {
-        // Decode token to check expiration
+        
         const decodedToken: any = jwtDecode(token);
         if (decodedToken?.exp < Date.now() / 1000) {
           console.warn("[Axios] Token has expired");
           localStorage.removeItem("token");
-          // Optional: Redirect to login if token is expired
+
           if (!window.location.pathname.includes("/login")) {
             window.location.href = "/login?error=session_expired";
           }
@@ -47,7 +47,7 @@ axiosInstance.interceptors.request.use(
   }
 );
 
-// ================== RESPONSE INTERCEPTOR ==================
+
 axiosInstance.interceptors.response.use(
   (response) => {
     console.debug("[Axios] Response received:", {
@@ -56,7 +56,7 @@ axiosInstance.interceptors.response.use(
       url: response.config.url,
     });
 
-    // Check for a successful login response and store token
+   
     if (response.data?.token) {
       localStorage.setItem("token", response.data.token);
       console.debug("[Axios] Token saved to localStorage");
@@ -111,12 +111,10 @@ axiosInstance.interceptors.response.use(
     // Handle network errors
     if (errorCode === "ERR_NETWORK") {
       console.error("[Axios] Network error - Backend may be unreachable");
-      // Optionally trigger global notification here
     }
 
     return Promise.reject(error);
   }
 );
 
-// ================== EXPORT ==================
 export default axiosInstance;
