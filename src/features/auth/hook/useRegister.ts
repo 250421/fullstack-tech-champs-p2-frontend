@@ -10,7 +10,7 @@ export const useRegister =() => {
     const navigate = useNavigate();
     return useMutation({
         mutationFn:async (values:RegisterSchemaType) =>{
-            const resp = await axiosInstance.post("/link/register",values);
+            const resp = await axiosInstance.post("/api/users/register",values);
             return resp.data;
         },
         onSuccess: () =>{

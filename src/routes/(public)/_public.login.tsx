@@ -34,7 +34,7 @@ function LoginPage() {
     const form = useForm<LoginSchemaType>({
       resolver: zodResolver(LoginSchema),
       defaultValues: {
-        username: "",
+        email: "",
         password:"",
       },
     });
@@ -70,13 +70,13 @@ function LoginPage() {
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                 <FormField
                   control={form.control}
-                  name="username"
+                  name="email"
                   render={({ field }) => (
                     <FormItem className="space-y-2  text-white">
-                      <FormLabel className="text-xl">Username</FormLabel>
+                      <FormLabel className="text-xl">Email Address</FormLabel>
                       <FormControl>
                         <Input 
-                          placeholder="Enter your username" 
+                          placeholder="Enter your Email Address" 
                           {...field} 
                           className="bg-card border border-gray-700 bg-black focus:ring-primary text-white"
                         />

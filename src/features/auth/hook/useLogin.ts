@@ -10,14 +10,12 @@ export const useLogin =() =>{
     const navigate = useNavigate();
     return useMutation({
         mutationFn: async (values:LoginSchemaType)=>{
-            const res = await axiosInstance.post("/link/login",values);
+            const res = await axiosInstance.post("/api/users/login",values);
             return res.data;
 
         },
         onSuccess: ()=>{
-            toast.success("User Logged In",{
-                duration: 2000,
-            });
+            toast.success("User Logged In")
             navigate({to:"/"});
             toast.success("User Logged In");
         },

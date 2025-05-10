@@ -33,6 +33,7 @@ function RegisterPage() {
       resolver: zodResolver(RegisterSchema),
       defaultValues: {
         username: "",
+        email:"",
         password:"",
       },
     });
@@ -86,6 +87,25 @@ function RegisterPage() {
                   )}
                 />
                 
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem className="space-y-2 text-white">
+                      <FormLabel className="text-xl">Email</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="email" 
+                          placeholder="Enter your email address" 
+                          {...field} 
+                          className="bg-card border bg-black text-white border-gray-700 focus:ring-primary"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
                 <FormField
                   control={form.control}
                   name="password"

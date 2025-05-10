@@ -55,7 +55,7 @@ function Index() {
                 variant="outline" 
                 className="mt-4 bg-green-400 text-gray-900 hover:bg-green-500 hover:text-white"
               >
-                Manage Team
+                <Link to="/my-team-page">Manage Team</Link>
               </Button>
             </div>
           ) : (
