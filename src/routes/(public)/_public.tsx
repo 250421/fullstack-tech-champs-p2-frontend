@@ -1,23 +1,39 @@
-import { useAuth } from '@/features/auth/hook/useAuth';
+import { Navbar } from '@/components/shared/navbar';
+import { AppSidebar } from '@/components/shared/sidebar/app-sidebar';
+import { SidebarContainer } from '@/components/shared/sidebar/sidebar-container';
+import { SidebarMainWrapper } from '@/components/shared/sidebar/sidebar-main-wrapper';
+import { useAuth } from '@/features/auth/hook/useAuth'
 import { createFileRoute, Navigate, Outlet } from '@tanstack/react-router'
-import { Loader } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 
 export const Route = createFileRoute('/(public)/_public')({
-  component: PublicLayout,
+  component: RouteComponent,
 })
 
-function PublicLayout() {
-  const {data: user,isLoading} = useAuth();
-  if(isLoading){
-    return <div className="flex items-center h-screen justify-center"> <Loader className="size-4"/></div>
-  }
-  if(user)
-  {
-    return <Navigate to = {"/"}/>;
-  }
+function RouteComponent() {
+  // const {data:user, isLoading} = useAuth();
+  
+  // if(isLoading) {
+  //   return (
+  //     <div className="flex items-center h-screen justify-center">
+  //       <Loader2 className="size-8 animate-spin"/>
+  //     </div>
+  //   );
+  // }
+  
+  // if(!user) {
+  //   return <Navigate to="/login"/>;
+  // }
+  
   return (
-    <div>
-      <Outlet />
-    </div>
-  )
+    <SidebarContainer>
+      <AppSidebar/>  
+      <SidebarMainWrapper>
+      <Navbar/>
+        <main className="max-w-screen mx-auto w-11/12">
+          <Outlet/>
+        </main>
+      </SidebarMainWrapper>
+    </SidebarContainer>
+  );
 }

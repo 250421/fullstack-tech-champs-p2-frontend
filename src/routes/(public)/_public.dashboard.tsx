@@ -3,16 +3,21 @@ import { createFileRoute, Navigate, Link } from '@tanstack/react-router'
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 
-export const Route = createFileRoute("/(auth)/_auth/")({
+export const Route = createFileRoute("/(public)/_public/dashboard")({
   component: Index,
 })
 
 function Index() {
-  const { data: user } = useAuth();
+  // const { data: user } = useAuth();
   
-  if (!user) {
-    return <Navigate to="/login" />;
-  }
+  // if (!user) {
+  //   return <Navigate to="/login" />;
+  // }
+
+  // Mock data
+  const user = {
+    name: "John Doe",
+  };
 
   // Mock data - replace with your actual data fetching
   const userTeam = {
@@ -65,7 +70,7 @@ function Index() {
                 className="bg-green-400 text-gray-900 hover:bg-green-500 hover:text-white"
                 asChild
               >
-                <Link to="/create-team">Create Your Team</Link>
+                <Link to="/createteam">Create Your Team</Link>
               </Button>
             </div>
           )}
