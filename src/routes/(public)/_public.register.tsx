@@ -32,7 +32,7 @@ function RegisterPage() {
     const form = useForm<RegisterSchemaType>({
       resolver: zodResolver(RegisterSchema),
       defaultValues: {
-        username: "",
+        userName:"",
         email:"",
         password:"",
       },
@@ -71,7 +71,7 @@ function RegisterPage() {
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                 <FormField
                   control={form.control}
-                  name="username"
+                  name="userName"
                   render={({ field }) => (
                     <FormItem className="space-y-2  text-white">
                       <FormLabel className="text-xl">Username</FormLabel>

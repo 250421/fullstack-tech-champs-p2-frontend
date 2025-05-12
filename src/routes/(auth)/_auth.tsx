@@ -11,27 +11,27 @@ export const Route = createFileRoute('/(auth)/_auth')({
 })
 
 function RouteComponent() {
-  const {data:user, isLoading} = useAuth();
-  
-  if(isLoading) {
+  const { data, isLoading } = useAuth();
+
+  if (isLoading) {
     return (
       <div className="flex items-center h-screen justify-center">
-        <Loader2 className="size-8 animate-spin"/>
+        <Loader2 className="size-8 animate-spin" />
       </div>
     );
   }
-  
-  if(!user) {
-    return <Navigate to="/login"/>;
+
+  if (!data?.isAuthenticated) {
+    return <Navigate to="/login" />;
   }
-  
+
   return (
     <SidebarContainer>
-      <AppSidebar/>  
+      <AppSidebar />
       <SidebarMainWrapper>
-      <Navbar/>
+        <Navbar />
         <main className="max-w-screen mx-auto w-11/12">
-          <Outlet/>
+          <Outlet />
         </main>
       </SidebarMainWrapper>
     </SidebarContainer>

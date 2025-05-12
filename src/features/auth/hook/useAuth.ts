@@ -1,39 +1,33 @@
+// src/hooks/useAuth.ts
 import { useQuery } from "@tanstack/react-query";
 import { axiosInstance } from "@/lib/axios-config";
 
-interface User {
-  userId: number;
-  userName: string;
-  email: string;
-  password:string;
-  role:string;
-  
-}
+const fetchAuthStatus = async (): Promise<{ isAuthenticated: boolean; user: any | null }> => {
+  const token = localStorage.getItem("token");
+  if (!token) return { isAuthenticated: false, user: null };
 
-interface AuthError {
-  code?: string;
-  message: string;
-  status?: number;
-}
-
-export const useAuth = () => {
-  return useQuery<User | null, AuthError>({
-    queryKey: ["auth"], 
-    queryFn: async () => {
-      try {
-        console.debug("[useAuth] Fetching user data...");
-        const response = await axiosInstance.get("/api/users/me");
-        console.debug("[useAuth] Authentication successful", response.data);
-        return response.data;
-      } catch (error: any) {
-    
-        return null;
-      }
-    },
-    staleTime: 1000 * 60 * 5, 
-    retry: false, 
-    refetchOnWindowFocus: false, 
-    
-  });
+  try {
+    const res = await axiosInstance.get("/api/users/me");
+    return {
+      isAuthenticated: true,
+      user: res.data,
+    };
+  } catch (error) {
+    console.error("AUTH ERROR:", error);
+    localStorage.removeItem("token"); // Clear token on error
+    return {
+      isAuthenticated: false,
+      user: null,
+    };
+  }
 };
 
+export const useAuth = () => {
+  return useQuery({
+    queryKey: ["authStatus"],
+    queryFn: fetchAuthStatus,
+    staleTime: 1000 * 60 * 5,
+    retry: false,
+    refetchOnWindowFocus: false,
+  });
+};
