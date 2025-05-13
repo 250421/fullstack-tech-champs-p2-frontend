@@ -61,10 +61,12 @@ function TeamPage() {
 
   return (
     <div className="container mx-auto py-15 space-y-8">
+      <div className='flex justify-center'><h1 className='text-3xl font-bold'>My Teams</h1></div>
       {/* Check if 'teams' is an array and not empty */}
       {Array.isArray(teams) && teams.length > 0 ? (
         teams.map((team) => (
           <div key={team.teamId} className="space-y-4">
+            
             <div className="flex justify-between items-center">
               <h1 className="text-3xl font-bold">{team.teamName}</h1>
               <DeleteTeamDialog
