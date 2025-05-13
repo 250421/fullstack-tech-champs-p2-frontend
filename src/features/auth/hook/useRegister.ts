@@ -10,10 +10,13 @@ export const useRegister =() => {
     const navigate = useNavigate();
     return useMutation({
         mutationFn:async (values:RegisterSchemaType) =>{
+            console.log("Sending data to backend:", values);
             const resp = await axiosInstance.post("/api/users/register",values);
             return resp.data;
         },
         onSuccess: () =>{
+            console.log()
+            console.log("User Create Success")
             toast.success("User Created Successfully");
             navigate({to:"/login"});
             

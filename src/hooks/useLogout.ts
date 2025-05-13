@@ -1,31 +1,23 @@
-import { axiosInstance } from "@/lib/axios-config";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useNavigate } from "@tanstack/react-router"
-import { AxiosError } from "axios";
+import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 
+export const useLogout = () => {
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
-export const useLogout = () =>{
-    const queryClient = useQueryClient();
-    const navigate = useNavigate();
-
-    return useMutation({
-        mutationFn: async () => {
-            const resp = await axiosInstance.post("/link/logout");
-            return resp.data;
-        },
-        onSuccess: ()=>{
-            queryClient.invalidateQueries({
-                queryKey:["link"],
-            });
-            toast.success("Logged out Successfully");
-            navigate({to:"/login"});
-        },
-        onError: (error) =>{
-            console.error(error);
-            if(error instanceof AxiosError){
-                toast.error(error.response?.data.message || "An error occured");
-            }
-        },
-    });
+  return useMutation({
+    mutationFn: async () => {
+      // No API call needed — logout is handled locally
+      localStorage.removeItem("token"); // Clear JWT token
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["authStatus"] }); // Refresh auth state
+      toast.success("Logged out successfully");
+      navigate({ to: "/login" }); // Redirect to login
+    },
+    onError: () => {
+      toast.error("Logout failed");
+    },
+  });
 };

@@ -8,9 +8,9 @@ export const Route = createFileRoute("/(auth)/_auth/")({
 })
 
 function Index() {
-  const { data: user } = useAuth();
+  const { data } = useAuth();
   
-  if (!user) {
+  if (!data?.isAuthenticated) {
     return <Navigate to="/login" />;
   }
 
@@ -36,7 +36,7 @@ function Index() {
 
   return (
     <div className="p-4 space-y-6 max-w-2xl mx-auto">
-      <h1 className="text-2xl font-bold text-white">Welcome {user.name}</h1>
+      <h1 className="text-2xl font-bold text-white">Welcome </h1>
       
       {/* Team Card */}
       <Card className="bg-gray-800 border-gray-700 hover:border-green-400 transition-colors duration-200">

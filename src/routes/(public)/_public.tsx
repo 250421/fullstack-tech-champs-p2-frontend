@@ -7,17 +7,24 @@ export const Route = createFileRoute('/(public)/_public')({
 })
 
 function PublicLayout() {
-  const {data: user,isLoading} = useAuth();
-  if(isLoading){
-    return <div className="flex items-center h-screen justify-center"> <Loader className="size-4"/></div>
+  const { data, isLoading } = useAuth();
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center h-screen justify-center">
+        <Loader className="size-4 animate-spin" />
+      </div>
+    );
   }
-  if(user)
-  {
-    return <Navigate to = {"/"}/>;
+
+  if (data?.isAuthenticated) {
+    return <Navigate to="/" />;
   }
+
   return (
     <div>
       <Outlet />
     </div>
-  )
+  );
 }
+

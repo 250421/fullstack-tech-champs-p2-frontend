@@ -1,47 +1,114 @@
-// src/hooks/useMyTeam.ts
-import { axiosInstance } from '@/lib/axios-config'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useAuth } from '@/features/auth/hook/useAuth';
+import { axiosInstance } from '@/lib/axios-config';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import type { UseMutateAsyncFunction } from '@tanstack/react-query';
 
-
-export type PlayerPosition = 'QB' | 'WR' | 'RB' | 'TE' | 'K' | 'DEF'
+export type PlayerPosition = 'Quarterback' | 'Wide Receiver' | 'Runningback' | 'Tightends' | 'Kicker';
 
 export interface Player {
-  id: string
-  name: string
-  position: PlayerPosition
+  name: string;
+  team: string;
+  fantasyPoints: number;
+  position: PlayerPosition;
 }
 
 export interface Team {
-  id: string
-  name: string
-  players: Player[]
+  teamId: number;
+  teamName: string;
+  qb: string; // Format: "Name,Team,FantasyPoints"
+  rb: string;
+  wr: string;
+  te: string;
+  k: string;
 }
 
-export const useMyTeam = () => {
-  const queryClient = useQueryClient()
+interface UseMyTeamReturn {
+  teams: Team[] | undefined;
+  isLoading: boolean;
+  isError: boolean;
+  updateTeam: UseMutateAsyncFunction<any, Error, Team, unknown>;
+  isUpdating: boolean;
+  deleteTeam: UseMutateAsyncFunction<void, Error, number, unknown>;
+  isDeleting: boolean;
+  teamToPlayers: (team: Team) => Player[];
+}
 
-  const { data: team, isLoading, isError } = useQuery<Team>({
-    queryKey: ['myTeam'],
+export const useMyTeam = (): UseMyTeamReturn => {
+  const queryClient = useQueryClient();
+  const { data: authData } = useAuth();
+  const userId = authData?.userId;
+  console.log(userId);
+
+  const parsePlayer = (playerString: string, position: PlayerPosition): Player => {
+    if (!playerString) return { name: '', team: '', fantasyPoints: 0, position };
+    
+    const parts = playerString.split(',');
+    return {
+      name: parts[0]?.trim() || '',
+      team: parts[1]?.trim() || '',
+      fantasyPoints: parseFloat(parts[2]) || 0,
+      position,
+    };
+  };
+
+  const { data: teams, isLoading, isError } = useQuery<Team[]>({
+    queryKey: ['myTeams', userId],
     queryFn: async () => {
-      const response = await axiosInstance.get('/link/data')
-      return response.data
+      if (!userId) throw new Error('User not authenticated');
+      const response = await axiosInstance.get(`/api/teams/team1/${userId}`);
+      return response.data;
     },
-  })
+    enabled: !!userId,
+  });
+
+  const updateTeamMutation = useMutation({
+    mutationFn: async (updatedTeam: Team) => {
+      if (!userId) throw new Error('User not authenticated');
+      const response = await axiosInstance.put(
+        `/api/teams/${updatedTeam.teamId}`,
+        { ...updatedTeam, userId }
+      );
+      return response.data;
+    },
+    onSuccess: (updatedTeam) => {
+      queryClient.setQueryData(['myTeams', userId], (old: Team[] | undefined) => 
+        old?.map(team => team.teamId === updatedTeam.teamId ? updatedTeam : team)
+      );
+    },
+  });
 
   const deleteTeamMutation = useMutation({
-    mutationFn: async () => {
-      await axiosInstance.delete('/api/teams/my-team')
+    mutationFn: async (teamId: number) => {
+      if (!userId) throw new Error('User not authenticated');
+      await axiosInstance.delete(`/api/teams/${teamId}`, {
+        data: { userId },
+      });
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['myTeam'] })
+    onSuccess: (_, teamId) => {
+      queryClient.setQueryData(['myTeams', userId], (old: Team[] | undefined) => 
+        old?.filter(team => team.teamId !== teamId)
+      );
     },
-  })
+  });
+
+  const teamToPlayers = (team: Team): Player[] => {
+    return [
+      ...(team.qb ? [parsePlayer(team.qb, 'Quarterback')] : []),
+      ...(team.rb ? [parsePlayer(team.rb, 'Wide Receiver')] : []),
+      ...(team.wr ? [parsePlayer(team.wr, 'Wide Receiver')] : []),
+      ...(team.te ? [parsePlayer(team.te, 'Tightends')] : []),
+      ...(team.k ? [parsePlayer(team.k, 'Kicker')] : []),
+    ];
+  };
 
   return {
-    team,
+    teams,
     isLoading,
     isError,
+    updateTeam: updateTeamMutation.mutateAsync,
+    isUpdating: updateTeamMutation.isPending,
     deleteTeam: deleteTeamMutation.mutateAsync,
     isDeleting: deleteTeamMutation.isPending,
-  }
-}
+    teamToPlayers,
+  };
+};
