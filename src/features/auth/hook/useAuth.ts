@@ -12,6 +12,7 @@ interface JwtPayload {
   userName: string;
   exp: number;
   iat: number;
+
 }
 
 const fetchAuthStatus = async (): Promise<{ isAuthenticated: boolean; user: any | null; userId: number | null }> => {
