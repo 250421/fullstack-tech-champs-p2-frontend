@@ -1,9 +1,9 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { Button } from '@/components/ui/button'
-import { Card, CardHeader, CardTitle, CardContent, CardDescription, CardFooter } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Loader2, Trash2, PlusCircle } from 'lucide-react'
+import { createFileRoute } from '@tanstack/react-router';
+import { Button } from '@/components/ui/button';
+import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Loader2, Trash2, PlusCircle } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -12,22 +12,22 @@ import {
   DialogDescription,
   DialogFooter,
   DialogTrigger,
-} from '@/components/ui/dialog'
-import { useMyTeam, type Player } from '@/features/nfl/hook/useMyTeam'
+} from '@/components/ui/dialog';
+import { useMyTeam, type Player } from '@/features/nfl/hook/useMyTeam';
 
 export const Route = createFileRoute('/(auth)/_auth/my-team-page')({
   component: TeamPage,
-})
+});
 
 function TeamPage() {
-  const { team, players, isLoading, isError, deleteTeam, isDeleting } = useMyTeam()
+  const { teams, isLoading, isError, deleteTeam, isDeleting, teamToPlayers } = useMyTeam();
 
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-64">
         <Loader2 className="h-8 w-8 animate-spin" />
       </div>
-    )
+    );
   }
 
   if (isError) {
@@ -35,16 +35,16 @@ function TeamPage() {
       <div className="text-center py-10 text-red-500">
         Failed to load team data. Please try again later.
       </div>
-    )
+    );
   }
 
-  if (!team || players.length === 0) {
+  if (!teams || teams.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-20 gap-6">
         <Card className="w-full max-w-md text-center">
           <CardHeader>
-            <CardTitle>No Team Found</CardTitle>
-            <CardDescription>You don't have a team yet</CardDescription>
+            <CardTitle>No Teams Found</CardTitle>
+            <CardDescription>You don't have any teams yet</CardDescription>
           </CardHeader>
           <CardContent>
             <Button asChild className="gap-2">
@@ -56,85 +56,78 @@ function TeamPage() {
           </CardContent>
         </Card>
       </div>
-    )
+    );
   }
 
   return (
-    <div className="container mx-auto py-8">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">{team.teamName}</h1>
-        <DeleteTeamDialog 
-          onConfirm={() => deleteTeam(team.teamId)} 
-          isDeleting={isDeleting} 
-        />
-      </div>
+    <div className="container mx-auto py-15 space-y-8">
+      {/* Check if 'teams' is an array and not empty */}
+      {Array.isArray(teams) && teams.length > 0 ? (
+        teams.map((team) => (
+          <div key={team.teamId} className="space-y-4">
+            <div className="flex justify-between items-center">
+              <h1 className="text-3xl font-bold">{team.teamName}</h1>
+              <DeleteTeamDialog
+                onConfirm={() => deleteTeam(team.teamId)}
+                isDeleting={isDeleting}
+              />
+            </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {players.map((player, index) => (
-          <PlayerCard key={`${player.position}-${index}`} player={player} />
-        ))}
-      </div>
+            {/* Ensure teamToPlayers returns a valid array */}
+            <TeamPlayersCard players={teamToPlayers(team) || []} />
+          </div>
+        ))
+      ) : (
+        <p>No teams available.</p> // Fallback message when no teams are present
+      )}
     </div>
-  )
+
+  );
 }
 
-function PlayerCard({ player }: { player: Player }) {
-  // Define the type for position colors
-  type PositionColorMap = {
-    [key in Player['position']]: {
-      bg: string
-      text: string
-      border: string
-    }
-  }
-
-  // Create the position colors object with proper typing
-  const positionColors: PositionColorMap = {
-    QB: { bg: 'bg-blue-50', text: 'text-blue-600', border: 'border-blue-200' },
-    WR: { bg: 'bg-green-50', text: 'text-green-600', border: 'border-green-200' },
-    RB: { bg: 'bg-yellow-50', text: 'text-yellow-600', border: 'border-yellow-200' },
-    TE: { bg: 'bg-purple-50', text: 'text-purple-600', border: 'border-purple-200' },
-    K: { bg: 'bg-red-50', text: 'text-red-600', border: 'border-red-200' },
-  }
-
-  // Safely get the position styles
-  const position = positionColors[player.position]
-
+function TeamPlayersCard({ players }: { players: Player[] }) {
   return (
-    <Card className={`hover:shadow-lg transition-shadow ${position.border}`}>
-      <CardHeader className="flex flex-row items-center gap-4 pb-3">
-        <Avatar className="h-12 w-12">
-          <AvatarImage src={`/avatars/${player.position.toLowerCase()}.png`} />
-          <AvatarFallback className={position.bg}>
-            {player.name.split(' ').map(n => n[0]).join('')}
-          </AvatarFallback>
-        </Avatar>
-        <div className="space-y-1">
-          <CardTitle className="text-lg">{player.name}</CardTitle>
-          <CardDescription className="text-sm">{player.team}</CardDescription>
-        </div>
+    <Card className="w-full bg-gray-800">
+      <CardHeader>
+        <CardTitle className="text-white">Players</CardTitle>
       </CardHeader>
-      <CardContent className="pb-3">
-        <div className="flex items-center justify-between">
-          <div className="space-y-1">
-            <p className="text-sm font-medium">Fantasy Points</p>
-            <p className="text-2xl font-bold">{player.fantasyPoints}</p>
-          </div>
-          <Badge variant="outline" className={`${position.bg} ${position.text} border-0`}>
-            {player.position}
-          </Badge>
+      <CardContent>
+        <div className="space-y-4 text-white">
+          {players.map((player) => (
+            <div key={`${player.name}-${player.position}`} className="flex items-center justify-between p-3 border rounded-lg">
+              <div className="flex items-center space-x-4">
+                <Avatar className="h-10 w-10 bg-gray-100">
+                  <AvatarImage src="" alt="Default avatar" />
+                  <AvatarFallback>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-6 w-6 text-gray-600"
+                      fill="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v1.2h19.2v-1.2c0-3.2-6.4-4.8-9.6-4.8z" />
+                    </svg>
+                  </AvatarFallback>
+                </Avatar>
+                <div>
+                  <p className="font-medium">{player.name}</p>
+                  <p className="text-sm text-muted-foreground">{player.team}</p>
+                </div>
+              </div>
+              <div className="flex flex-col items-end">
+                <Badge variant="outline" className="capitalize mb-1 bg-green-400 text-base">
+                  {player.position}
+                </Badge>
+                {/* <span className="text-sm font-medium">
+                  {player.fantasyPoints} pts
+                </span> */}
+              </div>
+            </div>
+          ))}
         </div>
       </CardContent>
-      <CardFooter className="flex justify-between pt-0">
-        <Button variant="outline" size="sm">
-          Stats
-        </Button>
-        <Button variant="outline" size="sm">
-          Trade
-        </Button>
-      </CardFooter>
     </Card>
-  )
+  );
 }
 
 function DeleteTeamDialog({ 
@@ -172,5 +165,5 @@ function DeleteTeamDialog({
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
+  );
 }
