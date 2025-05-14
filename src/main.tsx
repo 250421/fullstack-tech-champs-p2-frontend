@@ -1,7 +1,7 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client';
 import { RouterProvider, createRouter } from '@tanstack/react-router';
-
+import { Toaster } from "sonner";
 // Import CSS
 import './index.css'
 
@@ -21,6 +21,7 @@ declare module '@tanstack/react-router' {
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
+    <Toaster position="bottom-right" richColors />
     <RouterProvider router={router} />
   </StrictMode>,
 )

@@ -7,24 +7,28 @@ import type { LoginSchemaType } from "../schemas/login-schema";
 
 export const useLogin = () => {
   const navigate = useNavigate();
-  const queryClient = useQueryClient(); // ✅ Add this to invalidate auth query
+  const queryClient = useQueryClient(); 
 
   return useMutation({
     mutationFn: async (values: LoginSchemaType) => {
       const res = await axiosInstance.post("/api/users/login", values);
       const token = res.data.token;
-      localStorage.setItem("token", token); // ✅ Save token
+      localStorage.setItem("token", token); //Save token
       return res.data;
     },
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["authStatus"] });
+      navigate({ to: "/" }); 
       toast.success("User Logged In");
-      queryClient.invalidateQueries({ queryKey: ["authStatus"] }); // ✅ Refetch auth status
-      navigate({ to: "/" }); // ✅ Only navigate after token + refetch
     },
     onError: (error) => {
-      console.error(error);
+      console.error("Login error:", error);
+
       if (error instanceof AxiosError) {
-        toast.error(error.response?.data.message || "Login failed");
+        const message = error.response?.data?.message || error.response?.data?.error || "Login failed";
+        toast.error(message);
+      } else {
+        toast.error("Unexpected error occurred. Please try again.");
       }
     },
   });

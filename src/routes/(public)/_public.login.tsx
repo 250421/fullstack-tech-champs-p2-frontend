@@ -23,6 +23,7 @@ import { useLogin } from '@/features/auth/hook/useLogin'
 
 
 
+
 export const Route = createFileRoute('/(public)/_public/login')({
   component: LoginPage,
 })
@@ -40,7 +41,6 @@ function LoginPage() {
     });
     function onSubmit(values: LoginSchemaType) {
       login(values,);
-      
     }
   
   
