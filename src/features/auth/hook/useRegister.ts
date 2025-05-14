@@ -15,17 +15,17 @@ export const useRegister =() => {
             return resp.data;
         },
         onSuccess: () =>{
-            console.log()
-            console.log("User Create Success")
             toast.success("User Created Successfully");
             navigate({to:"/login"});
-            
         },
-        onError: (error) =>{
-            console.error(error);
-            if (error instanceof AxiosError)
-            {
-                toast.error(error.response?.data.message);
+        onError: (error) => {
+            console.error("Login error:", error);
+
+            if (error instanceof AxiosError) {
+                const backendMessage = error.response?.data?.message || error.response?.data?.error || "Something went wrong. Please try again.";
+                toast.error(backendMessage);
+            } else {
+                toast.error("Unexpected error. Please try again.");
             }
         }
     })

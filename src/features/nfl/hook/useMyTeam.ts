@@ -37,7 +37,6 @@ export const useMyTeam = (): UseMyTeamReturn => {
   const queryClient = useQueryClient();
   const { data: authData } = useAuth();
   const userId = authData?.userId;
-  console.log(userId);
 
   const parsePlayer = (playerString: string, position: PlayerPosition): Player => {
     if (!playerString) return { name: '', team: '', fantasyPoints: 0, position };
