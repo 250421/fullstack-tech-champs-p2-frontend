@@ -1,26 +1,21 @@
-# Build Stage
 FROM node:20-alpine AS build
 
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci
+COPY . .
+
+# Inject VITE_API_URL as a build argument and environment variable
 ARG VITE_API_URL
 ENV VITE_API_URL=$VITE_API_URL
 
-WORKDIR /app
-
-COPY package.json package-lock.json ./
-RUN npm ci
-
-COPY . .
-
 RUN npm run build
 
-# Production Stage
-FROM nginx:alpine
+FROM node:20-alpine AS runner
 
-# Copy built assets
-COPY --from=build /app/dist /usr/share/nginx/html
+RUN npm install -g serve
+WORKDIR /app
+COPY --from=build /app/dist ./dist
 
-# Optional: Only copy custom nginx.conf if you need it
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+EXPOSE 3000
+CMD ["serve", "-s", "dist", "-l", "3000"]

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState} from "react";
 
 // Routing
 import { createFileRoute } from '@tanstack/react-router'
@@ -160,6 +160,7 @@ function RouteComponent() {
         league_id,
         user_id: user_id
       });
+      my_team_res;
       
       // 3. Create bots, assign team, link team to bot
       const num_bots = num_players - 1;
