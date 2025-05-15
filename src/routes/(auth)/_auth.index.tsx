@@ -9,7 +9,7 @@ export const Route = createFileRoute("/(auth)/_auth/")({
 })
 function Index() {
   const { data } = useAuth();
-  const { teams, isLoading, isDeleting, deleteTeam, teamToPlayers } = useMyTeam();
+  const { teams, isLoading } = useMyTeam();
 
   if (!data?.isAuthenticated) {
     return <Navigate to="/login" />;
@@ -59,8 +59,8 @@ function Index() {
                       /> */}
                     </div>
                     <div className="flex gap-6 text-gray-300">
-                      <span className="text-green-400 font-medium">Wins: {team.wins}</span>
-                      <span className="text-red-400 font-medium">Losses: {team.losses}</span>
+                      {/* <span className="text-green-400 font-medium">Wins: {team.wins}</span>
+                      <span className="text-red-400 font-medium">Losses: {team.losses}</span> */}
                     </div>
                     {/* <TeamPlayersCard players={teamToPlayers(team) || []} /> */}
                   </div>
