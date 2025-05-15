@@ -1,21 +1,11 @@
 import axios from 'axios';
 
-export async function createTeam({ 
-    team_name, 
-    is_bot,
-    league_id,
-    user_id,
-    bot_id,
-    img,
+export async function createLeague({ 
+    num_players
   }: { 
-    team_name: string; 
-    is_bot?: boolean; 
-    league_id: number,
-    user_id?: number; // optional
-    bot_id?: number; // optional
-    img?: string;
+    num_players: number
 }) {
-    console.log("ABOUT TO CREATE TEAM")
+    console.log("ABOUT TO CREATE LEAGUE")
   try {
     const token = localStorage.getItem('token');
 
@@ -27,21 +17,11 @@ export async function createTeam({
     console.log("TOKEN FOUND")
 
     console.log("PASSING THIS: ", { 
-        team_name,
-        is_bot, 
-        league_id,
-        user_id,
-        bot_id,
-        img
+        num_players
     });
 
-    const res = await axios.post('http://localhost:8080/api/teams', { 
-        team_name,
-        is_bot, 
-        league_id,
-        user_id,
-        bot_id,
-        img
+    const res = await axios.post('http://localhost:8080/api/leagues', { 
+        num_players
     },
     {
       headers: {
@@ -49,7 +29,7 @@ export async function createTeam({
       },
       withCredentials: true,
     });
-    console.log("TEAM DATA: ", res.data);
+    console.log("LEAGUE DATA: ", res.data);
     
     // TODO: Start draft & Redirect
 

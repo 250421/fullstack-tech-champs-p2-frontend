@@ -1,16 +1,20 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 // Routing
 import { createFileRoute } from '@tanstack/react-router'
 
 // Actions
+import { test } from "@/utils/testActions";
+import { editBot, createBot } from "@/utils/botActions";
 import { createTeam } from "@/utils/teamActions";
+import { createLeague } from "@/utils/leagueActions";
+import { createDraftSchedule } from "@/utils/draftPickActions";
 
 // Components
-import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardFooter } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 // Initial State
 const initialState = {
@@ -28,6 +32,13 @@ function RouteComponent() {
 
   // State for form data
   const [formData, setFormData] = useState(initialState);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if(!localStorage.getItem('token')){
+      localStorage.setItem('token', 'eyJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3NDczMTU2MzcsImV4cCI6MTc0NzMyMjgzNywidXNlcklkIjoxLCJlbWFpbCI6ImpvaG5AdGVzdC5jb20iLCJ1c2VyTmFtZSI6IkpvaG4gRG9lIn0.BXLzw9s80hM4GUPlSGEjbl-zZIpgNWu5iclJmP7y5Zk');
+    }
+  }, []);
 
   // Destructure the form data
   const { 
@@ -88,12 +99,14 @@ function RouteComponent() {
     }
     
     // -- END: Form validation for required input fields --
+
+    setLoading(true); // show loading modal
     
     try {
       console.log("form input: ", formData);
       
       // TODO: Create Team
-      await createTeam(formData);
+      await createDraft(formData);
 
       // Clear form on success
       setFormData(initialState);
@@ -108,16 +121,91 @@ function RouteComponent() {
       err?.message ||
       "Something went wrong trying to Create.";
 
-      console.error('Create Product failed:', errorMessage);
+      console.error('Create Team failed:', errorMessage);
 
 
       // TODO: Trigger alert
+    } finally {
+      setLoading(false); // close modal
     }
   };
+
+  // Handle League, Bots, Teams, and Draft
+  const createDraft = async ({ 
+    team_name,
+    num_players,
+    img
+  }: { 
+    team_name: string; 
+    num_players: number; 
+    // user_id?: number; // if needed
+    img: string;
+}) => {
+
+    console.log("INSIDE CREATE DRAFT")
+
+    try {
+      // Handle Create Draft
+      await test();
+      // -------------------------
+      // 1. Create league
+
+      const league_res = await createLeague({ num_players });
+      const league_id = league_res.id;
+
+      // 2. Create user's team
+      const user_id = 1; // TODO: replace with actual ID
+      const my_team_res  = await createTeam({ 
+        team_name, 
+        img,
+        is_bot: false,
+        league_id,
+        user_id: user_id
+      });
+      
+      // 3. Create bots, assign team, link team to bot
+      const num_bots = num_players - 1;
+      const botPromises = [];
+
+      for (let i = 0; i < num_bots; i++) {
+        botPromises.push(
+          (async () => {
+            // 3a. Create bot
+            const bot_res = await createBot({ league_id });
+            const bot_id = bot_res.id;
+
+            // 3b. Create team for bot
+            const bot_team_res = await createTeam({ 
+              team_name: `Bot ${i + 1}`, 
+              // img,
+              is_bot: true,
+              bot_id,
+              league_id
+            });
+            const bot_team_id = bot_team_res.id;
+
+            // 3c. Update bot with assigned team
+            await editBot({ bot_id, team_id: bot_team_id });
+          })()
+        )
+      }
+
+      await Promise.all(botPromises);
+
+      // Step 4: Create draft pick schedule
+      console.log('ALL DONE (with bots)');
+      console.log('CREATING DRAFT NOW...');
+      await createDraftSchedule({ league_id });
+    } catch (err) {
+      console.error("Error in createDraft:", err);
+    }
+  }
 
   return (
     <div className="w-full h-full p-6">
       <h1 className="text-2xl font-bold mb-8">Create Team</h1>
+
+      {/* -- Start: Start of Form -- */}
       
       <div className="space-y-8 max-w-4xl">
         <div>
@@ -199,6 +287,20 @@ function RouteComponent() {
           </Button>
         </div>
       </div>
+
+      {/* -- END: Start of Form -- */}
+
+      {/* Loading Modal */}
+      <Dialog open={loading}>
+        <DialogContent className="flex flex-col items-center justify-center space-y-4 py-12">
+          <DialogTitle>
+            <VisuallyHidden>Starting Draft</VisuallyHidden>
+          </DialogTitle>
+          <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-gray-900" />
+          <p className="text-lg font-medium">Starting Draft...</p>
+        </DialogContent>
+      </Dialog>
+
     </div>
   )
 }
