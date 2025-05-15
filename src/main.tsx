@@ -1,27 +1,30 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client';
-import { RouterProvider, createRouter } from '@tanstack/react-router';
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+
+// Tanstack stuff (Router & Query)
+import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { Toaster } from "sonner";
 // Import CSS
-import './index.css'
+import "./index.css";
 
 // Import the generated route tree
-import { routeTree } from './routeTree.gen';
-
+import { routeTree } from "./routeTree.gen";
 
 // Create a new router instance
-const router = createRouter({ routeTree })
+const router = createRouter({ routeTree });
+// Create a new query Client instance
+const queryClient = new QueryClient();
 
 // Register the router instance for type safety
-declare module '@tanstack/react-router' {
+declare module "@tanstack/react-router" {
   interface Register {
-    router: typeof router
+    router: typeof router;
   }
 }
 
-createRoot(document.getElementById('root')!).render(
+createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <Toaster position="bottom-right" richColors />
     <RouterProvider router={router} />
-  </StrictMode>,
-)
+  </StrictMode>
+);
