@@ -6,7 +6,7 @@ export const Route = createFileRoute('/(public)/_public')({
   component: PublicLayout,
 })
 
-function PublicLayout() {
+export function PublicLayout() {
   const { data, isLoading } = useAuth();
 
   if (isLoading) {
