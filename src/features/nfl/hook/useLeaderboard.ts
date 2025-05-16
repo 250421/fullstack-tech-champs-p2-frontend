@@ -11,7 +11,7 @@ export interface TeamLeaderboardDto {
 }
 
 export const useLeaderboard = () => {
-  const { data, isLoading: authLoading } = useAuth();
+  const { isLoading: authLoading } = useAuth();
   const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
   return useQuery<TeamLeaderboardDto[]>({
