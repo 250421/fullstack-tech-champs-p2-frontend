@@ -31,7 +31,9 @@ export async function createDraftSchedule({
         Authorization: `Bearer ${token}`,
       },
       withCredentials: true,
-    });
+    })
+    
+    console.log('GOT ALL TEAMS');
 
     const teams = teamsRes.data;
     const numTeams = teams.length;
@@ -48,21 +50,28 @@ export async function createDraftSchedule({
     const draftOrder: number[] = [];
 
     for (let round = 0; round < TOTAL_POSITIONS; round++) {
-      const roundOrder = teams.map((team: any) => team.id);
+      const roundOrder = teams.map((team: any) => team.teamId);
       if (round % 2 !== 0) roundOrder.reverse(); // Snake order
       draftOrder.push(...roundOrder);
     }
 
+    console.log('ABOUT TO ENTER DRAFT PICK LOOP');
     // 4. Create draft picks
     for (let i = 0; i < totalPicks; i++) {
       const team_id = draftOrder[i];
       const pick_number = i + 1;
 
+      console.log("PASSING THIS TO DRAFT: ", { 
+          leagueId: league_id,
+          teamId: team_id,
+          pickNumber: pick_number 
+      });
+
       pickPromises.push(
         axios.post(`http://localhost:8080/api/draft_picks`, { 
-            league_id,
-            team_id,
-            pick_number 
+            leagueId: league_id,
+            teamId: team_id,
+            pickNumber: pick_number 
         },
         {
             headers: {
@@ -107,7 +116,7 @@ export async function editDraftPick({
     }
 
     const res = await axios.put(`http://localhost:8080/api/draft_picks/pick-number/${pick_number}`, { 
-        player_id
+        playerId: player_id
     },
     {
       headers: {

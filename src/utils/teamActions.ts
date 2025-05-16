@@ -35,21 +35,37 @@ export async function createTeam({
         img
     });
 
-    const res = await axios.post('http://localhost:8080/api/teams', { 
-        team_name,
-        is_bot, 
-        league_id,
-        user_id,
-        bot_id,
-        img
-    },
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      withCredentials: true,
-    });
-    console.log("TEAM DATA: ", res.data);
+    let res;
+
+    if(!is_bot) {
+        res = await axios.post('http://localhost:8080/api/teams', { 
+            teamName: team_name,
+            isBot: is_bot, 
+            leagueId: league_id,
+            userId: user_id,
+            imgUrl: img
+        },
+        {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+        withCredentials: true,
+        });
+    } else {
+        res = await axios.post('http://localhost:8080/api/bots/teams', { 
+            teamName: team_name,
+            leagueId: league_id,
+            botId: bot_id,
+            // imgUrl: img
+        },
+        {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+        withCredentials: true,
+        });
+    }
+    console.log("TEAM DATA: ", res?.data);
     
     // TODO: Start draft & Redirect
 

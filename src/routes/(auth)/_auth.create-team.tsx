@@ -170,7 +170,7 @@ function RouteComponent() {
           (async () => {
             // 3a. Create bot
             const bot_res = await createBot({ league_id });
-            const bot_id = bot_res.id;
+            const bot_id = bot_res.botId;
 
             // 3b. Create team for bot
             const bot_team_res = await createTeam({ 
@@ -180,10 +180,10 @@ function RouteComponent() {
               bot_id,
               league_id
             });
-            const bot_team_id = bot_team_res.id;
+            const bot_team_id = bot_team_res.teamId;
 
             // 3c. Update bot with assigned team
-            await editBot({ bot_id, team_id: bot_team_id });
+            await editBot({ bot_id, team_id: bot_team_id, league_id });
           })()
         )
       }
