@@ -9,25 +9,67 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-// import { Button } from '@/components/ui/button'
-// import {
-//   Select,
-//   SelectContent,
-//   SelectItem,
-//   SelectTrigger,
-//   SelectValue,
-// } from '@/components/ui/select'
+import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useLeaderboard } from '@/features/nfl/hook/useLeaderboard'
 import { useSidebar } from '@/hooks/use-sidebar'
+import { useState } from 'react'
+import { ArrowDown, ArrowUp, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 
 export const Route = createFileRoute('/(auth)/_auth/leaderboard')({
   component: LeaderboardPage,
 })
 
+const ITEMS_PER_PAGE = 10
+
 function LeaderboardPage() {
-  // const [selectedWeek, setSelectedWeek] = useState<number | undefined>(undefined)
-  const { data, isLoading, isError } = useLeaderboard();
+  const { data, isLoading, isError } = useLeaderboard()
+  const [sortConfig, setSortConfig] = useState<{
+    key: 'teamName' | 'totalFantasyPoints'
+    direction: 'ascending' | 'descending'
+  }>({ key: 'totalFantasyPoints', direction: 'descending' })
+  const [currentPage, setCurrentPage] = useState(1)
+  const { isOpen } = useSidebar()
+
+  const handleSort = (key: 'teamName' | 'totalFantasyPoints') => {
+    setSortConfig(prev => ({
+      key,
+      direction:
+        prev.key === key && prev.direction === 'descending'
+          ? 'ascending'
+          : 'descending'
+    }))
+    setCurrentPage(1) // Reset to first page when sorting changes
+  }
+
+  const sortedTeams = data ? [...data].sort((a, b) => {
+    if (a[sortConfig.key] < b[sortConfig.key]) {
+      return sortConfig.direction === 'ascending' ? -1 : 1
+    }
+    if (a[sortConfig.key] > b[sortConfig.key]) {
+      return sortConfig.direction === 'ascending' ? 1 : -1
+    }
+    return 0
+  }) : []
+
+  // Pagination logic
+  const totalPages = Math.ceil(sortedTeams.length / ITEMS_PER_PAGE)
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
+  const endIndex = startIndex + ITEMS_PER_PAGE
+  const paginatedTeams = sortedTeams.slice(startIndex, endIndex)
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1)
+    }
+  }
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1)
+    }
+  }
 
   if (isError) {
     return (
@@ -39,74 +81,72 @@ function LeaderboardPage() {
     )
   }
 
-  const teams = data?.data || []
-  const currentUserTeam = data?.currentUserTeam
-  const { isOpen } = useSidebar();
   return (
     <div className={`container mx-auto py-8 transition-all duration-300 ${isOpen ? 'ml-8' : 'ml-0'}`}>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Season Leaderboard</h1>
-        <div className="flex items-center gap-4">
-          {currentUserTeam && (
-            <div className="bg-secondary px-4 py-2 rounded-lg">
-              <p className="text-sm text-muted-foreground">Your Team Rank</p>
-              <p className="font-bold">
-                #{currentUserTeam.rank} - {currentUserTeam.teamName}
-              </p>
-            </div>
-          )}
-          {/* <Button variant="outline">View Season</Button> */}
-        </div>
-      </div>
-
-      <div className="mb-4 w-48">
-        {/* <Select
-          value={selectedWeek?.toString() ?? 'all'}
-          onValueChange={(value) => {
-            setSelectedWeek(value === 'all' ? undefined : parseInt(value))
-          }}
-        >
-          <SelectTrigger className='text-white bg-gray-800'>
-            <SelectValue placeholder="Filter by week" />
-          </SelectTrigger>
-          <SelectContent className='bg-gray-800'>
-            <SelectItem value="all" className="text-white">All Weeks</SelectItem>
-            {Array.from({ length: 18 }, (_, i) => i + 1).map((week) => (
-              <SelectItem key={week} value={week.toString()} className='bg-gray-800 text-white'>
-                Week {week}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select> */}
+        <h1 className="text-3xl font-bold mt-5">Fantasy Leaderboard</h1>
       </div>
 
       <div className="rounded-md border bg-gray-800">
         <Table>
           <TableCaption className='text-white py-2'>
-            {/* {selectedWeek
-              ? `Leaderboard for Week ${selectedWeek}`
-              : 'Overall Season Leaderboard'} */}
+            Fantasy points leaderboard
+            {totalPages > 1 && (
+              <div className="flex justify-center items-center gap-4 mt-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handlePrevPage}
+                  disabled={currentPage === 1}
+                  className="flex items-center gap-1 bg-green-400 text-black hover:bg-green-500"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                  Previous
+                </Button>
+                <span className="text-sm">
+                  Page {currentPage} of {totalPages}
+                </span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleNextPage}
+                  disabled={currentPage === totalPages}
+                  className="flex items-center gap-1 bg-green-400 text-black hover:bg-green-500"
+                >
+                  Next
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
+            )}
           </TableCaption>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[100px] text-white">Rank</TableHead>
-              <TableHead className="text-white">Team Name</TableHead>
-              <TableHead className='text-white'>Wins - Losses - Total</TableHead>
-              <TableHead className="text-right text-white">Points</TableHead>
+              <TableHead className="text-white w-[200px]">Team</TableHead>
+              <TableHead className="text-right text-white">
+                <Button
+                  variant="ghost"
+                  onClick={() => handleSort('totalFantasyPoints')}
+                  className="flex items-center gap-1 float-right hover:bg-gray-700"
+                >
+                  Total Fantasy Points
+                  {sortConfig.key === 'totalFantasyPoints' ? (
+                    sortConfig.direction === 'ascending' ? (
+                      <ArrowUp className="h-4 w-4" />
+                    ) : (
+                      <ArrowDown className="h-4 w-4" />
+                    )
+                  ) : null}
+                </Button>
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {isLoading ? (
-              Array.from({ length: 10 }).map((_, i) => (
+              Array.from({ length: ITEMS_PER_PAGE }).map((_, i) => (
                 <TableRow key={i}>
-                  <TableCell>
-                    <Skeleton className="h-4 w-8" />
-                  </TableCell>
-                  <TableCell>
+                  <TableCell className="flex items-center gap-3">
+                    <Skeleton className="h-8 w-8 rounded-full" />
                     <Skeleton className="h-4 w-32" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-4 w-16" />
                   </TableCell>
                   <TableCell>
                     <Skeleton className="h-4 w-16 ml-auto" />
@@ -114,19 +154,26 @@ function LeaderboardPage() {
                 </TableRow>
               ))
             ) : (
-              teams.map((team) => (
-                <TableRow
-                  key={team.id}
-                  className={
-                    currentUserTeam?.id === team.id ? 'bg-secondary ' : ''
-                  }
-                >
-                  <TableCell className="font-medium">#{team.rank}</TableCell>
-                  <TableCell>{team.teamName}</TableCell>
-                  <TableCell>
-                    {team.wins}-{team.losses}-{team.ties}
+              paginatedTeams.map((team, index) => (
+                <TableRow key={team.teamName} className="hover:bg-gray-700">
+                  <TableCell className="flex items-center gap-3">
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage
+                        src={team.imgUrl}
+                        alt={team.teamName}
+                        className="object-cover"
+                      />
+                      <AvatarFallback>
+                        {team.teamName.charAt(0).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                    <span className='text-white font-medium'>
+                      {startIndex + index + 1}. {team.teamName}
+                    </span>
                   </TableCell>
-                  <TableCell className="text-right">{team.points}</TableCell>
+                  <TableCell className="text-right text-white font-medium">
+                    {team.totalFantasyPoints.toFixed(2)}
+                  </TableCell>
                 </TableRow>
               ))
             )}

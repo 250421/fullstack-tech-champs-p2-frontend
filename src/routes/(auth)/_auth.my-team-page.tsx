@@ -1,6 +1,12 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { Button } from '@/components/ui/button';
-import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/card';
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardDescription,
+} from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Loader2, Trash2, PlusCircle } from 'lucide-react';
@@ -13,7 +19,9 @@ import {
   DialogFooter,
   DialogTrigger,
 } from '@/components/ui/dialog';
+
 import { useMyTeam, type Player } from '@/features/nfl/hook/useMyTeam';
+import { useLeaderboard } from '@/features/nfl/hook/useLeaderboard';
 
 export const Route = createFileRoute('/(auth)/_auth/my-team-page')({
   component: TeamPage,
@@ -21,6 +29,7 @@ export const Route = createFileRoute('/(auth)/_auth/my-team-page')({
 
 function TeamPage() {
   const { teams, isLoading, isError, deleteTeam, isDeleting, teamToPlayers } = useMyTeam();
+  const { data: leaderboard } = useLeaderboard();
 
   if (isLoading) {
     return (
@@ -61,29 +70,45 @@ function TeamPage() {
 
   return (
     <div className="container mx-auto py-15 space-y-8">
-      <div className='flex justify-center'><h1 className='text-3xl font-bold'>My Teams</h1></div>
-      {/* Check if 'teams' is an array and not empty */}
-      {Array.isArray(teams) && teams.length > 0 ? (
-        teams.map((team) => (
-          <div key={team.teamId} className="space-y-4">
-            
-            <div className="flex justify-between items-center">
-              <h1 className="text-3xl font-bold">{team.teamName}</h1>
-              <DeleteTeamDialog
-                onConfirm={() => deleteTeam(team.teamId)}
-                isDeleting={isDeleting}
-              />
-            </div>
+      <div className="flex justify-center">
+        <h1 className="text-3xl font-bold">My Teams</h1>
+      </div>
 
-            {/* Ensure teamToPlayers returns a valid array */}
-            <TeamPlayersCard players={teamToPlayers(team) || []} />
-          </div>
-        ))
+      {Array.isArray(teams) && teams.length > 0 ? (
+        teams.map((team) => {
+          const teamPlayers = teamToPlayers(team) || [];
+
+          // Match team name with leaderboard to get image URL
+          const matchedLeaderboard = leaderboard?.find(
+            (entry) => entry.teamName === team.teamName
+          );
+
+          const imgUrl = matchedLeaderboard?.imgUrl ?? '';
+
+          return (
+            <div key={team.teamId} className="space-y-4">
+              <div className="flex justify-between items-center">
+                <div className="flex items-center gap-4">
+                  <Avatar className="h-12 w-12 bg-white border">
+                    <AvatarImage src={imgUrl} alt={team.teamName} />
+                    <AvatarFallback>{team.teamName[0]}</AvatarFallback>
+                  </Avatar>
+                  <h1 className="text-2xl font-semibold">{team.teamName}</h1>
+                </div>
+                <DeleteTeamDialog
+                  onConfirm={() => deleteTeam(team.teamId)}
+                  isDeleting={isDeleting}
+                />
+              </div>
+
+              <TeamPlayersCard players={teamPlayers} />
+            </div>
+          );
+        })
       ) : (
-        <p>No teams available.</p> // Fallback message when no teams are present
+        <p>No teams available.</p>
       )}
     </div>
-
   );
 }
 
@@ -96,7 +121,10 @@ function TeamPlayersCard({ players }: { players: Player[] }) {
       <CardContent>
         <div className="space-y-4 text-white">
           {players.map((player) => (
-            <div key={`${player.name}-${player.position}`} className="flex items-center justify-between p-3 border rounded-lg">
+            <div
+              key={`${player.name}-${player.position}`}
+              className="flex items-center justify-between p-3 border rounded-lg"
+            >
               <div className="flex items-center space-x-4">
                 <Avatar className="h-10 w-10 bg-gray-100">
                   <AvatarImage src="" alt="Default avatar" />
@@ -120,9 +148,6 @@ function TeamPlayersCard({ players }: { players: Player[] }) {
                 <Badge variant="outline" className="capitalize mb-1 bg-green-400 text-base">
                   {player.position}
                 </Badge>
-                {/* <span className="text-sm font-medium">
-                  {player.fantasyPoints} pts
-                </span> */}
               </div>
             </div>
           ))}
@@ -132,12 +157,12 @@ function TeamPlayersCard({ players }: { players: Player[] }) {
   );
 }
 
-function DeleteTeamDialog({ 
-  onConfirm, 
-  isDeleting 
-}: { 
-  onConfirm: () => Promise<void>, 
-  isDeleting: boolean 
+function DeleteTeamDialog({
+  onConfirm,
+  isDeleting,
+}: {
+  onConfirm: () => Promise<void>;
+  isDeleting: boolean;
 }) {
   return (
     <Dialog>
@@ -155,8 +180,8 @@ function DeleteTeamDialog({
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
-          <Button 
-            variant="destructive" 
+          <Button
+            variant="destructive"
             onClick={onConfirm}
             disabled={isDeleting}
             className="gap-2"
