@@ -1,34 +1,37 @@
 // src/hooks/useLeaderboard.ts
-import { useQuery } from '@tanstack/react-query'
-import axios from 'axios'
+import { useAuth } from '@/features/auth/hook/useAuth';
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 
 
-export interface TeamStats {
-  id: string
-  rank: number
-  teamName: string
-  wins: number
-  losses: number
-  ties: number
-  points: number
+export interface TeamLeaderboardDto {
+  teamName: string;
+  imgUrl: string;
+  totalFantasyPoints: number;
 }
 
-interface LeaderboardResponse {
-  success: boolean
-  data: TeamStats[]
-  currentUserTeam?: TeamStats
-}
+export const useLeaderboard = () => {
+  const { isLoading: authLoading } = useAuth();
+  const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
-export const useLeaderboard = (week?: number) => {
-  return useQuery<LeaderboardResponse>({
-    queryKey: ['leaderboard', week],
+  return useQuery<TeamLeaderboardDto[]>({
+    queryKey: ['leaderboard'],
     queryFn: async () => {
-      const response = await axios.get('/leaderboard', {
-        params: { week },
-      })
-      return response.data
+      if (!token) throw new Error('No token found');
+      
+      const response = await axios.get<TeamLeaderboardDto[]>(
+        'http://localhost:8080/api/teams/leaderboard',
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log(response.data);
+      return response.data;
     },
+    enabled: !!token && !authLoading,
     retry: 1,
     staleTime: 1000 * 60 * 5, // 5 minutes
-  })
-}
+  });
+};

@@ -3,6 +3,7 @@ import { createFileRoute, Navigate, Link } from '@tanstack/react-router'
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { useMyTeam } from '@/features/nfl/hook/useMyTeam';
+import { useLeaderboard } from '@/features/nfl/hook/useLeaderboard';
 
 export const Route = createFileRoute("/(auth)/_auth/")({
   component: Index,
@@ -15,11 +16,14 @@ function Index() {
     return <Navigate to="/login" />;
   }
 
-  const leaderboard = [
-    { rank: 1, name: "Dragon Warriors", wins: 12, losses: 3 },
-    { rank: 2, name: "Phoenix Flyers", wins: 10, losses: 5 },
-    { rank: 3, name: "Titan Strikers", wins: 9, losses: 6 },
-  ];
+ 
+  const { data: leaderboard} = useLeaderboard();
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+const topThreeTeams = leaderboard?.slice(0, 3) || [];
 
   const matchHistory = [
     { opponent: "Phoenix Flyers", result: "Win", score: "3-1", date: "2023-05-15" },
@@ -95,13 +99,13 @@ function Index() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {leaderboard.map((team) => (
+              {topThreeTeams.map((team, index) => (
                 <div
-                  key={team.rank}
+                  key={team.teamName}
                   className="flex justify-between items-center hover:bg-gray-700 p-2 rounded transition-colors duration-150"
                 >
-                  <span className="font-medium text-white">#{team.rank} {team.name}</span>
-                  <span className="text-sm text-gray-400">{team.wins}W - {team.losses}L</span>
+                  <span className="font-medium text-white">#{index + 1} {team.teamName}</span>
+                  <span className="text-sm text-gray-400">{team.totalFantasyPoints} pts</span>
                 </div>
               ))}
             </div>
