@@ -201,7 +201,7 @@ function RouteComponent() {
   }
 
   return (
-    <div className="w-full h-full p-6">
+    <div className="w-full h-full p-10">
       <h1 className="text-2xl font-bold mb-8">Create Team</h1>
 
       {/* -- Start: Start of Form -- */}
@@ -225,7 +225,7 @@ function RouteComponent() {
               variant="outline" 
               size="sm"
               onClick={() => document.getElementById('img')?.click()}
-              className="text-sm cursor-pointer"
+              className="text-sm cursor-pointer bg-green-400 ml-8 mt-8"
             >
               {img ? 'Change Photo' : 'Upload Photo'}
             </Button>
@@ -243,7 +243,7 @@ function RouteComponent() {
                 variant="outline" 
                 size="sm"
                 onClick={() => setFormData({...formData, img: ''})}
-                className="text-sm cursor-pointer text-red-500 hover:text-red-700"
+                className="text-sm cursor-pointer text-red-500 hover:text-red-700 ml-8 mt-8"
               >
                 Remove
               </Button>
@@ -279,7 +279,7 @@ function RouteComponent() {
         
         <div className="pt-4">
           <Button 
-            className="bg-green-200 hover:bg-green-300 text-black font-medium px-12 py-6 text-lg rounded-md"
+            className="bg-green-400 hover:bg-green-300 text-black font-medium px-12 py-6 text-lg rounded-md"
             onClick={onSubmit}
           >
             Start Draft

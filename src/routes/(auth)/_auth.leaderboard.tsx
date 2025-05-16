@@ -9,26 +9,25 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { Button } from '@/components/ui/button'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
+// import { Button } from '@/components/ui/button'
+// import {
+//   Select,
+//   SelectContent,
+//   SelectItem,
+//   SelectTrigger,
+//   SelectValue,
+// } from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
-
-import { useState } from 'react'
 import { useLeaderboard } from '@/features/nfl/hook/useLeaderboard'
+import { useSidebar } from '@/hooks/use-sidebar'
 
 export const Route = createFileRoute('/(auth)/_auth/leaderboard')({
   component: LeaderboardPage,
 })
 
 function LeaderboardPage() {
-  const [selectedWeek, setSelectedWeek] = useState<number | undefined>(undefined)
-  const { data, isLoading, isError } = useLeaderboard(selectedWeek)
+  // const [selectedWeek, setSelectedWeek] = useState<number | undefined>(undefined)
+  const { data, isLoading, isError } = useLeaderboard();
 
   if (isError) {
     return (
@@ -42,9 +41,9 @@ function LeaderboardPage() {
 
   const teams = data?.data || []
   const currentUserTeam = data?.currentUserTeam
-
+  const { isOpen } = useSidebar();
   return (
-    <div className="container mx-auto py-8">
+    <div className={`container mx-auto py-8 transition-all duration-300 ${isOpen ? 'ml-8' : 'ml-0'}`}>
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Season Leaderboard</h1>
         <div className="flex items-center gap-4">
@@ -56,12 +55,12 @@ function LeaderboardPage() {
               </p>
             </div>
           )}
-          <Button variant="outline">View Season</Button>
+          {/* <Button variant="outline">View Season</Button> */}
         </div>
       </div>
 
       <div className="mb-4 w-48">
-        <Select
+        {/* <Select
           value={selectedWeek?.toString() ?? 'all'}
           onValueChange={(value) => {
             setSelectedWeek(value === 'all' ? undefined : parseInt(value))
@@ -78,15 +77,15 @@ function LeaderboardPage() {
               </SelectItem>
             ))}
           </SelectContent>
-        </Select>
+        </Select> */}
       </div>
 
       <div className="rounded-md border bg-gray-800">
         <Table>
           <TableCaption className='text-white py-2'>
-            {selectedWeek
+            {/* {selectedWeek
               ? `Leaderboard for Week ${selectedWeek}`
-              : 'Overall Season Leaderboard'}
+              : 'Overall Season Leaderboard'} */}
           </TableCaption>
           <TableHeader>
             <TableRow>
