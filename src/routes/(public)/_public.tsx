@@ -12,7 +12,7 @@ export function PublicLayout() {
   if (isLoading) {
     return (
       <div className="flex items-center h-screen justify-center">
-        <Loader className="size-4 animate-spin" />
+        <Loader className="size-4 animate-spin"  data-testid="loader" />
       </div>
     );
   }
@@ -22,7 +22,7 @@ export function PublicLayout() {
   }
 
   return (
-    <div>
+    <div data-testid="public-layout">
       <Outlet />
     </div>
   );
