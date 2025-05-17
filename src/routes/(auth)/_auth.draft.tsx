@@ -247,8 +247,8 @@ function RouteComponent() {
     }
 
   return (
-    <Fragment>
-      <div className="w-full h-full p-6">
+    <div className="">
+      <div className="w-full h-full p-9 ml-5 mt-13">
         <h1 className="text-2xl font-bold mb-8">Player Draft Page</h1>
         
         <div className="max-w-4xl">
@@ -294,7 +294,7 @@ function RouteComponent() {
                       </div>
                     </div>
                   </div>
-                  <Button onClick={() => window.location.href = '/my-team-page'} className="bg-green-600 hover:bg-green-700 text-white cursor-pointer">
+                  <Button onClick={() => window.location.href = '/my-team-page'} className="bg-green-400 hover:bg-green-700 text-black cursor-pointer">
                     View My Team
                   </Button>
                 </div>
@@ -449,6 +449,6 @@ function RouteComponent() {
         </DialogContent>
       </Dialog>
 
-    </Fragment>
+    </div>
   )
 }

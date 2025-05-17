@@ -160,7 +160,7 @@ function RouteComponent() {
         league_id,
         user_id: user_id
       });
-      
+      my_team_res;
       // 3. Create bots, assign team, link team to bot
       const num_bots = num_players - 1;
       const botPromises = [];
@@ -205,16 +205,16 @@ function RouteComponent() {
   }
 
   return (
-    <div className="w-full h-full p-6">
-      <h1 className="text-2xl font-bold mb-8">Create Team</h1>
+    <div className="w-full h-full p-9 ml-3 mt-13 bg-gray-800 ">
+      <h1 className="text-2xl font-bold mb-8 text-white">Create Team</h1>
 
       {/* -- Start: Start of Form -- */}
       
       <div className="space-y-8 max-w-4xl">
         <div>
-          <h2 className="text-lg font-medium mb-4">Add Team Logo</h2>
+          <h2 className="text-lg font-medium mb-4 text-white">Add Team Logo</h2>
           <div className="flex">
-            <div className="h-24 w-24 rounded-full border flex items-center justify-center overflow-hidden">
+            <div className="h-24 w-24 rounded-full border text-white flex items-center justify-center overflow-hidden">
               {img ? (
                 <img 
                   src={img} 
@@ -229,7 +229,7 @@ function RouteComponent() {
               variant="outline" 
               size="sm"
               onClick={() => document.getElementById('img')?.click()}
-              className="text-sm cursor-pointer"
+              className="text-sm cursor-pointer ml-5 mt-8 bg-green-400 text-black"
             >
               {img ? 'Change Photo' : 'Upload Photo'}
             </Button>
@@ -247,7 +247,7 @@ function RouteComponent() {
                 variant="outline" 
                 size="sm"
                 onClick={() => setFormData({...formData, img: ''})}
-                className="text-sm cursor-pointer text-red-500 hover:text-red-700"
+                className="text-sm cursor-pointer text-red-500 hover:text-red-700 ml-5 mt-8"
               >
                 Remove
               </Button>
@@ -256,26 +256,26 @@ function RouteComponent() {
         </div>
         
         <div>
-          <label htmlFor="team_name" className="block text-lg font-medium mb-2">Team Name</label>
+          <label htmlFor="team_name" className="block text-lg font-medium mb-2 text-white">Team Name</label>
           <Input 
             id="team_name"
             name="team_name"
             value={team_name}
             onChange={onChange}
-            className="rounded-md w-full max-w-xl"
+            className="rounded-md w-full max-w-xl text-white"
             placeholder="Enter your team name"
           />
         </div>
         
         <div>
-          <label htmlFor="num_players" className="block text-lg font-medium mb-2">Number of bots in League</label>
+          <label htmlFor="num_players" className="block text-lg font-medium mb-2 text-white">Number of bots in League</label>
           <Input 
             id="num_players"
             name="num_players"
             type="number"
             value={num_players}
             onChange={onChange}
-            className="rounded-md w-32"
+            className="rounded-md w-32 text-white"
             min="1" 
             max="12"
           />
@@ -283,7 +283,7 @@ function RouteComponent() {
         
         <div className="pt-4">
           <Button 
-            className="bg-green-200 hover:bg-green-300 text-black font-medium px-12 py-6 text-lg rounded-md"
+            className="bg-green-400 hover:bg-white text-black font-medium px-12 py-6 text-lg rounded-md"
             onClick={onSubmit}
           >
             Start Draft

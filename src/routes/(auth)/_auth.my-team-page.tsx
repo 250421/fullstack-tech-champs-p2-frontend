@@ -123,7 +123,7 @@ function TeamPlayersCard({ players }: { players: Player[] }) {
           {players.map((player) => (
             <div
               key={`${player.name}-${player.position}`}
-              className="flex items-center justify-between p-3 border rounded-lg"
+              className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-700 p-2 rounded transition-colors duration-150"
             >
               <div className="flex items-center space-x-4">
                 <Avatar className="h-10 w-10 bg-gray-100">

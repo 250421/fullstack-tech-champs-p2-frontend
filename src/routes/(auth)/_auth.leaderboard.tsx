@@ -90,7 +90,7 @@ function LeaderboardPage() {
       <div className="rounded-md border bg-gray-800">
         <Table>
           <TableCaption className='text-white py-2'>
-            Fantasy points leaderboard
+            
             {totalPages > 1 && (
               <div className="flex justify-center items-center gap-4 mt-2">
                 <Button
@@ -156,8 +156,9 @@ function LeaderboardPage() {
             ) : (
               paginatedTeams.map((team, index) => (
                 <TableRow key={team.teamName} className="hover:bg-gray-700">
-                  <TableCell className="flex items-center gap-3">
-                    <Avatar className="h-8 w-8">
+                  <TableCell className="flex items-center gap-3 text-white">
+                    {startIndex + index + 1}.
+                    <Avatar className="h-8 w-8 text-black">
                       <AvatarImage
                         src={team.imgUrl}
                         alt={team.teamName}
@@ -168,7 +169,7 @@ function LeaderboardPage() {
                       </AvatarFallback>
                     </Avatar>
                     <span className='text-white font-medium'>
-                      {startIndex + index + 1}. {team.teamName}
+                      {team.teamName}
                     </span>
                   </TableCell>
                   <TableCell className="text-right text-white font-medium">
