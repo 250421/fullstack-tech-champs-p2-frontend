@@ -21,7 +21,7 @@ export async function createLeague({
     });
 
     const res = await axios.post('http://localhost:8080/api/leagues', { 
-        num_players
+        numPlayers: num_players
     },
     {
       headers: {
