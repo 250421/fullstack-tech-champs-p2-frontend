@@ -21,7 +21,7 @@ export async function createBot({
     });
 
     const res = await axios.post('http://localhost:8080/api/bots', { 
-        league_id
+        leagueId: league_id
     },
     {
       headers: {
@@ -47,9 +47,11 @@ export async function createBot({
 export async function editBot({ 
     team_id,
     bot_id,
+    league_id
   }: {
     team_id: number;
     bot_id?: number;
+    league_id: number;
 }) {
     console.log("ABOUT TO EDIT BOT")
   try {
@@ -61,7 +63,8 @@ export async function editBot({
     }
 
     const res = await axios.put(`http://localhost:8080/api/bots/${bot_id}`, { 
-        team_id
+        teamId: team_id,
+        leagueId: league_id
     },
     {
       headers: {

@@ -1,20 +1,20 @@
-import { useState} from "react";
+import { useState, useEffect } from "react";
 
 // Routing
 import { createFileRoute } from '@tanstack/react-router'
 
 // Actions
+import { test } from "@/utils/testActions";
+import { editBot, createBot } from "@/utils/botActions";
+import { createTeam } from "@/utils/teamActions";
+import { createLeague } from "@/utils/leagueActions";
+import { createDraftSchedule } from "@/utils/draftPickActions";
 
 // Components
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
-import { createLeague } from "@/utils/leagueActions";
-import { test } from "@/utils/testActions";
-import { createTeam } from "@/utils/teamActions";
-import { createBot, editBot } from "@/utils/botActions";
-import { createDraftSchedule } from "@/utils/draftPickActions";
 
 // Initial State
 const initialState = {
@@ -32,11 +32,11 @@ function RouteComponent() {
   const [formData, setFormData] = useState(initialState);
   const [loading, setLoading] = useState(false);
 
-  // useEffect(() => {
-  //   if(!localStorage.getItem('token')){
-  //     localStorage.setItem('token', 'eyJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3NDczMTU2MzcsImV4cCI6MTc0NzMyMjgzNywidXNlcklkIjoxLCJlbWFpbCI6ImpvaG5AdGVzdC5jb20iLCJ1c2VyTmFtZSI6IkpvaG4gRG9lIn0.BXLzw9s80hM4GUPlSGEjbl-zZIpgNWu5iclJmP7y5Zk');
-  //   }
-  // }, []);
+  useEffect(() => {
+    if(!localStorage.getItem('token')){
+      localStorage.setItem('token', 'eyJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3NDczMTU2MzcsImV4cCI6MTc0NzMyMjgzNywidXNlcklkIjoxLCJlbWFpbCI6ImpvaG5AdGVzdC5jb20iLCJ1c2VyTmFtZSI6IkpvaG4gRG9lIn0.BXLzw9s80hM4GUPlSGEjbl-zZIpgNWu5iclJmP7y5Zk');
+    }
+  }, []);
 
   // Destructure the form data
   const { 
@@ -161,7 +161,6 @@ function RouteComponent() {
         user_id: user_id
       });
       my_team_res;
-      
       // 3. Create bots, assign team, link team to bot
       const num_bots = num_players - 1;
       const botPromises = [];
@@ -171,7 +170,7 @@ function RouteComponent() {
           (async () => {
             // 3a. Create bot
             const bot_res = await createBot({ league_id });
-            const bot_id = bot_res.id;
+            const bot_id = bot_res.botId;
 
             // 3b. Create team for bot
             const bot_team_res = await createTeam({ 
@@ -181,10 +180,10 @@ function RouteComponent() {
               bot_id,
               league_id
             });
-            const bot_team_id = bot_team_res.id;
+            const bot_team_id = bot_team_res.teamId;
 
             // 3c. Update bot with assigned team
-            await editBot({ bot_id, team_id: bot_team_id });
+            await editBot({ bot_id, team_id: bot_team_id, league_id });
           })()
         )
       }
@@ -195,22 +194,27 @@ function RouteComponent() {
       console.log('ALL DONE (with bots)');
       console.log('CREATING DRAFT NOW...');
       await createDraftSchedule({ league_id });
+
+      // Start Game
+      console.log('Starting Game, Redirecting...');
+      window.location.href = "/draft";
+
     } catch (err) {
       console.error("Error in createDraft:", err);
     }
   }
 
   return (
-    <div className="w-full h-full p-10">
-      <h1 className="text-2xl font-bold mb-8">Create Team</h1>
+    <div className="w-full h-full p-9 ml-3 mt-13 bg-gray-800 ">
+      <h1 className="text-2xl font-bold mb-8 text-white">Create Team</h1>
 
       {/* -- Start: Start of Form -- */}
       
       <div className="space-y-8 max-w-4xl">
         <div>
-          <h2 className="text-lg font-medium mb-4">Add Team Logo</h2>
+          <h2 className="text-lg font-medium mb-4 text-white">Add Team Logo</h2>
           <div className="flex">
-            <div className="h-24 w-24 rounded-full border flex items-center justify-center overflow-hidden">
+            <div className="h-24 w-24 rounded-full border text-white flex items-center justify-center overflow-hidden">
               {img ? (
                 <img 
                   src={img} 
@@ -225,7 +229,7 @@ function RouteComponent() {
               variant="outline" 
               size="sm"
               onClick={() => document.getElementById('img')?.click()}
-              className="text-sm cursor-pointer bg-green-400 ml-8 mt-8"
+              className="text-sm cursor-pointer ml-5 mt-8 bg-green-400 text-black"
             >
               {img ? 'Change Photo' : 'Upload Photo'}
             </Button>
@@ -243,7 +247,7 @@ function RouteComponent() {
                 variant="outline" 
                 size="sm"
                 onClick={() => setFormData({...formData, img: ''})}
-                className="text-sm cursor-pointer text-red-500 hover:text-red-700 ml-8 mt-8"
+                className="text-sm cursor-pointer text-red-500 hover:text-red-700 ml-5 mt-8"
               >
                 Remove
               </Button>
@@ -252,26 +256,26 @@ function RouteComponent() {
         </div>
         
         <div>
-          <label htmlFor="team_name" className="block text-lg font-medium mb-2">Team Name</label>
+          <label htmlFor="team_name" className="block text-lg font-medium mb-2 text-white">Team Name</label>
           <Input 
             id="team_name"
             name="team_name"
             value={team_name}
             onChange={onChange}
-            className="rounded-md w-full max-w-xl"
+            className="rounded-md w-full max-w-xl text-white"
             placeholder="Enter your team name"
           />
         </div>
         
         <div>
-          <label htmlFor="num_players" className="block text-lg font-medium mb-2">Number of bots in League</label>
+          <label htmlFor="num_players" className="block text-lg font-medium mb-2 text-white">Number of bots in League</label>
           <Input 
             id="num_players"
             name="num_players"
             type="number"
             value={num_players}
             onChange={onChange}
-            className="rounded-md w-32"
+            className="rounded-md w-32 text-white"
             min="1" 
             max="12"
           />
@@ -279,7 +283,7 @@ function RouteComponent() {
         
         <div className="pt-4">
           <Button 
-            className="bg-green-400 hover:bg-green-300 text-black font-medium px-12 py-6 text-lg rounded-md"
+            className="bg-green-400 hover:bg-white text-black font-medium px-12 py-6 text-lg rounded-md"
             onClick={onSubmit}
           >
             Start Draft
