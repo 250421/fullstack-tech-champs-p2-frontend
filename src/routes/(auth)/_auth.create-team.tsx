@@ -194,6 +194,11 @@ function RouteComponent() {
       console.log('ALL DONE (with bots)');
       console.log('CREATING DRAFT NOW...');
       await createDraftSchedule({ league_id });
+
+      // Start Game
+      console.log('Starting Game, Redirecting...');
+      window.location.href = "/draft";
+
     } catch (err) {
       console.error("Error in createDraft:", err);
     }

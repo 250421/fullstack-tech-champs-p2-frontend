@@ -79,3 +79,98 @@ export async function createTeam({
     }
   }
 }
+
+export async function getTeamById({ 
+    team_id
+  }: { 
+    team_id: String
+}) {
+  
+  console.log("FETCHING TEAM BY ID");
+  try {
+
+    const token = localStorage.getItem('token');
+
+    // Check if the token is not available
+    if (!token) {
+        throw new Error('No authentication token found');
+    }
+
+    console.log("TOKEN FOUND")
+
+    console.log("PASSING THIS: ", { 
+        team_id
+    });
+
+    // Backend request
+    const res = await axios.get(`http://localhost:8080/api/teams/${team_id}`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+        withCredentials: true,
+    });
+
+    console.log("GOT TEAM DATA : ", res.data);
+    return res.data;
+
+  } catch (error) {
+    console.error("Error fetching team data:", error);
+    // return null;
+    if (axios.isAxiosError(error)) {
+      const message = error.response?.data?.error || 'Request failed. Please try again.';
+      throw new Error(message);
+    } else {
+      throw new Error('Something went wrong.');
+    }
+  }
+}
+
+export async function addPlayer({ 
+    team_id,
+    player_api_id, 
+  }: { 
+    team_id: number,
+    player_api_id: number; 
+}) {
+    console.log("ABOUT TO ADD PLAYER TO TEAM")
+  try {
+    const token = localStorage.getItem('token');
+
+    // Check if the token is not available
+    if (!token) {
+        throw new Error('No authentication token found');
+    }
+
+    console.log("TOKEN FOUND")
+
+    console.log("PASSING THIS: ", { 
+        player_api_id,
+        team_id
+    });
+
+    let res;
+
+    res = await axios.post(`http://localhost:8080/api/teams/${team_id}/add-player`, { 
+        playerApiId: player_api_id
+    },
+    {
+      headers: {
+          Authorization: `Bearer ${token}`,
+      },
+      withCredentials: true,
+    });
+
+    console.log("NEW TEAM DATA: ", res?.data);
+    
+    // TODO: Start draft & Redirect
+
+    return res.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      const message = error.response?.data?.error || 'Request failed. Please try again.';
+      throw new Error(message);
+    } else {
+      throw new Error('Something went wrong.');
+    }
+  }
+}

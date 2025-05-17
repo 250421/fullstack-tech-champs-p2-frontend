@@ -82,13 +82,15 @@ export async function createDraftSchedule({
       );
     }
 
-    const results = await Promise.all(pickPromises);
-    console.log("DRAFT PICKS CREATED:", results.map(r => r.data));
+    const res = await Promise.all(pickPromises);
+    console.log("DRAFT PICKS CREATED:", res.map(r => r.data));
     console.log("DRAFT IS READY")
     
     // TODO: Start draft & Redirect
 
-    // return res.data;
+    return {
+      success: true
+    };
   } catch (error) {
     if (axios.isAxiosError(error)) {
       const message = error.response?.data?.error || 'Request failed. Please try again.';
@@ -136,5 +138,44 @@ export async function editDraftPick({
     } else {
       throw new Error('Something went wrong.');
     }
+  }
+}
+
+export async function getDraftPick({ 
+    pick_number
+  }: { 
+    pick_number: number
+}) {
+  
+  console.log("FETCHING DRAFT PICK BY PICK NUMBER");
+  try {
+
+    const token = localStorage.getItem('token');
+
+    // Check if the token is not available
+    if (!token) {
+        throw new Error('No authentication token found');
+    }
+
+    console.log("TOKEN FOUND")
+
+    console.log("PASSING THIS: ", { 
+        pick_number
+    });
+
+    // Backend request
+    const res = await axios.get(`http://localhost:8080/api/draft_picks/pick-number/${pick_number}`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+        withCredentials: true,
+    });
+
+    console.log("GOT DRAFT PICK DATA : ", res.data);
+    return res.data;
+
+  } catch (error) {
+    console.error("Error fetching draft_pick data:", error);
+    return null;
   }
 }
