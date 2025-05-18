@@ -20,8 +20,12 @@ function Index() {
   const { data: leaderboard} = useLeaderboard();
 
   if (isLoading) {
-    return <div>Loading...</div>;
-  }
+      return (
+        <div className="flex justify-center items-center h-64">
+          <Loader2 className="h-8 w-8 animate-spin" />
+        </div>
+      );
+    }
 
 const topThreeTeams = leaderboard?.slice(0, 3) || [];
 
