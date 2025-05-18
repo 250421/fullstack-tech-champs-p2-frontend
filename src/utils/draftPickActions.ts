@@ -102,11 +102,11 @@ export async function createDraftSchedule({
 }
 
 export async function editDraftPick({ 
-    player_id,
+    player_data,
     pick_number,
   }: {
-    player_id: number;
-    pick_number?: number;
+    player_data: string;
+    pick_number: number;
 }) {
     console.log("ABOUT TO EDIT DRAFT PICK")
   try {
@@ -118,7 +118,7 @@ export async function editDraftPick({
     }
 
     const res = await axios.put(`http://localhost:8080/api/draft_picks/pick-number/${pick_number}`, { 
-        playerId: player_id
+        playerData: player_data
     },
     {
       headers: {
@@ -128,12 +128,11 @@ export async function editDraftPick({
     });
 
     console.log("DRAFT PICK UPDATED, DATA: ", res.data);
-    // window.location.href = '/products';
 
     return res.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      const message = error.response?.data?.error || 'Login failed. Please try again.';
+      const message = error.response?.data?.error || 'Draft Pick Edit failed. Please try again.';
       throw new Error(message);
     } else {
       throw new Error('Something went wrong.');

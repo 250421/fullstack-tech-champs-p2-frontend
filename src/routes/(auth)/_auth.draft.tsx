@@ -6,9 +6,12 @@ import { createFileRoute } from '@tanstack/react-router';
 // Hooks
 import { useAuth } from "@/hooks/useAuth";
 import { useGetLeagueById } from "@/hooks/useGetLeagueById";
-import { getDraftPick } from "@/utils/draftPickActions";
+import { getDraftPick, editDraftPick } from "@/utils/draftPickActions";
 import { getTeamById } from "@/utils/teamActions";
 import { addPlayer } from "@/utils/teamActions";
+import { usePlayers } from "@/hooks/usePlayers";
+import { editLeague } from "@/utils/leagueActions";
+import { botPickPlayer } from "@/utils/botActions";
 
 // Components
 import TableRow from "@/components/DraftTable/TableRow";
@@ -31,13 +34,24 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { CheckCircle2 } from "lucide-react";
+// Pagination components
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationPrevious,
+  PaginationNext,
+} from "@/components/ui/pagination";
 
-// Sample player data
-const playerData = [
-  { position: "RB", name: "Sequan Barkley", drafted: false, fantasyPoints: 5.0, playerApiId: 23422 },
-  { position: "QB", name: "Dak Prescott",  drafted: false, fantasyPoints: 3.0, playerApiId: 24961 },
-  { position: "WR", name: "Tyreek Hill",  drafted: false, fantasyPoints: 7.0, playerApiId: 23841 },
-];
+// Draft Process - How it works:
+// -------------------------------
+// 1. when player is picked then pass player ID to POST /api/teams/<team-ID>/add-player { position, playerAPIId } 
+// 2. increment league current_pick
+// 3. (loop) fetch current team picking (show loading modal)
+// 4. If current team is_bot = true
+// 5. BOT PICKS (show loading modal) -> POST api/bots/<team-ID>/pick-player { botId, position }
+// 6. increment league current_pick
+// 7. (loop) fetch current team picking (show loading modal)
 
 const TOTAL_POSITIONS = 6;
 
@@ -72,7 +86,7 @@ function RouteComponent() {
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 5;
 
-    // const { data, isLoading, isError } = useProducts(triggeredSearchTerm);
+    const { data: playerData, isLoading: isLoading_Players, isError: isError_Players } = usePlayers(triggeredSearchTerm);
 
     // -- END: Undrafted Players Logic ---
 
@@ -113,8 +127,8 @@ function RouteComponent() {
     // League Data
     const current_pick_number = league?.currentPick || 0;
     const num_teams_in_league = league?.numPlayers || 0;
-    // const total_picks = num_teams_in_league * TOTAL_POSITIONS;
-    const total_picks = 3;
+    const total_picks = num_teams_in_league * TOTAL_POSITIONS;
+    // const total_picks = 3;
 
     if(current_pick_number > total_picks) {
       setDraftOver(true);
@@ -139,13 +153,6 @@ function RouteComponent() {
       } else {
         setIsBot(false);
       }
-      // when player is picked then pass player ID to POST /api/teams/<team-ID>/add-player { position, playerAPIId } 
-      // increment league current_pick
-      // (loop) fetch current team picking (show loading modal)
-      // If current team is_bot = true
-      // BOT PICKS (show loading modal) -> POST api/bots/<team-ID>/pick-player { botId, position }
-      // increment league current_pick
-      // (loop) fetch current team picking (show loading modal)
     }, [currentTeam]);
 
     // Bot is picking logic here
@@ -185,11 +192,23 @@ function RouteComponent() {
 
         setCurrentTeam(team_data);
 
+        // If already picked toggle modal
+        if(draftPick_data.playerData && team_data) {
+          setPickedPlayer(draftPick_data.playerData);
+
+          if(team_data.isBot) {
+            setShowModal_Bot_Picking(true);
+          } else {
+            setShowModal_MyPick(true);
+          }
+        }
+
       } catch (error) {
         console.error('Failed to fetch current team picking:', error);
       }
     };
 
+    // Increment pick # AND check if draft is over
     const goToNextPick = async () => {
       // Update league currentPick to currentPick + 1
       setCurrentTeam(null);
@@ -198,8 +217,10 @@ function RouteComponent() {
       setPickNumber(nextPickNumber);
 
       try {
-        // await updateLeague({...league, currentPick: nextPickNumber})
+        // Update the league Current Pick 
+        await editLeague({...league, currentPick: nextPickNumber})
 
+        // Check if draft is over
         if(nextPickNumber <= total_picks) {
           fetchDraftPick(nextPickNumber);
         } else {
@@ -211,17 +232,22 @@ function RouteComponent() {
       }
     }
 
-    const handleBotPick = () => {
+    // Toggle modal, trigger bot pick, show Player Picked 
+    const handleBotPick = async () => {
+
+      // Don't pick player again AND return if no current team data
+      if(!currentTeam || pickedPlayer) return;
+
       setShowModal_Bot_Picking(true);
 
       try {
 
         // call bot pick endpoint
-        setTimeout(() => {
-          console.log("wait 2 seconds");
-        }, 3000);
+        const player_name = await botPickPlayer({team_id: currentTeam.teamId});
+        await editDraftPick({pick_number: pickNumber, player_data: player_name})
+
         // returns player picked
-        setPickedPlayer(playerData[0].name)
+        setPickedPlayer(player_name)
         
       } catch (err) {
         console.error("Error in Handle Bot Pick:", err);
@@ -229,6 +255,7 @@ function RouteComponent() {
         // setShowModal_Bot_Picking(false);
       }
     }
+
 
     // while fetching league data, Show loading spinner OR error message
     if (isLoading_League) return <p className="text-center">Loading draft...</p>;
@@ -251,6 +278,36 @@ function RouteComponent() {
           draftNum_prefix = "th";
       }
     }
+
+  const allPlayers = playerData?.players || [];
+
+  const filteredPlayers = positionFilter === 'All'
+    ? allPlayers
+    : allPlayers.filter(player => player.position === positionFilter);
+
+  // Pagination Logic
+  const totalPages = Math.ceil(filteredPlayers.length / itemsPerPage);
+  const paginatedPlayers = filteredPlayers.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  // Show fewer pagination buttons (only show the 5 most immediate pages)
+  const get_Pages_For_Pagination = () => {
+    const totalNumbers = 5; // max buttons to show
+    const half = Math.floor(totalNumbers / 2);
+
+    let start = Math.max(1, currentPage - half);
+    let end = Math.min(totalPages, currentPage + half);
+
+    if (currentPage <= half) {
+      end = Math.min(totalPages, totalNumbers);
+    } else if (currentPage + half >= totalPages) {
+      start = Math.max(1, totalPages - totalNumbers + 1);
+    }
+
+    return Array.from({ length: end - start + 1 }, (_, i) => start + i);
+  };
 
   return (
     <Fragment>
@@ -318,6 +375,12 @@ function RouteComponent() {
                 </div>
               </div>
             )}
+
+            {(pickedPlayer && !showModal_MyPick && !showModal_Bot_Picking ) && (
+                <Button onClick={goToNextPick} className="bg-black text-white cursor-pointer ml-2">
+                  Go To Next Pick
+                </Button>
+            )}
           </div>
           
           {/* Search Bar */}
@@ -357,11 +420,54 @@ function RouteComponent() {
             </div>
             
             {/* Player Rows */}
-            {playerData.map((player, _) => (
-              <div key={player.playerApiId}>
-                <TableRow player={player} team_id={currentTeam?.teamId} setShowModal_MyPick={setShowModal_MyPick} setPickedPlayer={setPickedPlayer} draftOver={draftOver} isBot={isBot} currentTeam={currentTeam} />
+            {isLoading_Players && ( <p className="text-center">Loading players...</p>)}
+            {isError_Players && ( <p className="text-center text-red-500">Failed to load products.</p>)}
+            {(!isLoading_Players && !isError_Players && paginatedPlayers) && (
+              <Fragment>
+                {paginatedPlayers.map(player => (
+                  <div key={player.playerApiId}>
+                    <TableRow player={player} team_id={currentTeam?.teamId} setShowModal_MyPick={setShowModal_MyPick} setPickedPlayer={setPickedPlayer} draftOver={draftOver} isBot={isBot} currentTeam={currentTeam} pickNumber={pickNumber} pickedPlayer={pickedPlayer} />
+                  </div>
+                ))}
+              </Fragment>
+            )}
+            
+            {/* If no player table is empty */}
+            {paginatedPlayers.length === 0 && (
+              <p className="p-4 text-center text-gray-500">No players found.</p>
+            )}
+
+            {filteredPlayers.length > itemsPerPage && (
+              <div className="flex justify-center mt-6">
+                <Pagination>
+                  <PaginationContent>
+                    <PaginationPrevious
+                      onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                      className={currentPage === 1 ? "pointer-events-none opacity-50 select-none" : ""}
+                    />
+                    {get_Pages_For_Pagination().map(page => (
+                      <PaginationItem key={page}>
+                        <button
+                          onClick={() => setCurrentPage(page)}
+                          className={`px-3 py-1 rounded ${
+                            currentPage === page
+                              ? "bg-gray-800 text-white cursor-pointer"
+                              : "bg-white text-gray-700 border border-gray-300 cursor-pointer"
+                          }`}
+                        >
+                          {page}
+                        </button>
+                      </PaginationItem>
+                    ))}
+                    <PaginationNext
+                      onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                      className={currentPage === totalPages ? "pointer-events-none opacity-50 select-none" : ""}
+                    />
+                  </PaginationContent>
+                </Pagination>
               </div>
-            ))}
+            )}
+
           </div>
         </div>
       </div>
