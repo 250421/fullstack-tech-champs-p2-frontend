@@ -13,13 +13,13 @@ export const Route = createFileRoute('/(auth)/_auth')({
 function RouteComponent() {
   const { data, isLoading } = useAuth();
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center h-screen justify-center">
-        <Loader2 className="size-8 animate-spin" />
-      </div>
-    );
-  }
+  if (isLoading_League) {
+      return (
+        <div className="flex justify-center items-center h-64">
+          <Loader2 className="h-8 w-8 animate-spin" />
+        </div>
+      );
+    }
 
   if (!data?.isAuthenticated) {
     return <Navigate to="/login" />;
