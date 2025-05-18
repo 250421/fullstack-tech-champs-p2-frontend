@@ -20,7 +20,7 @@ export async function createBot({
         league_id
     });
 
-    const res = await axios.post('http://localhost:8080/api/bots', { 
+    const res = await axios.post('http://3.20.227.225:8082/api/bots', { 
         leagueId: league_id
     },
     {
@@ -62,7 +62,7 @@ export async function editBot({
         throw new Error('No authentication token found');
     }
 
-    const res = await axios.put(`http://localhost:8080/api/bots/${bot_id}`, { 
+    const res = await axios.put(`http://3.20.227.225:8082/api/bots/${bot_id}`, { 
         teamId: team_id,
         leagueId: league_id
     },

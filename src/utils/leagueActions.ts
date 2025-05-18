@@ -20,7 +20,7 @@ export async function createLeague({
         num_players
     });
 
-    const res = await axios.post('http://localhost:8080/api/leagues', { 
+    const res = await axios.post('http://3.20.227.225:8082/api/leagues', { 
         numPlayers: num_players
     },
     {

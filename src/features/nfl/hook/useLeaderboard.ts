@@ -20,7 +20,7 @@ export const useLeaderboard = () => {
       if (!token) throw new Error('No token found');
       
       const response = await axios.get<TeamLeaderboardDto[]>(
-        'http://localhost:8080/api/teams/leaderboard',
+        'http://3.20.227.225:8082/api/teams/leaderboard',
         {
           headers: {
             Authorization: `Bearer ${token}`,

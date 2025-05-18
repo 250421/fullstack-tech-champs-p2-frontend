@@ -38,7 +38,7 @@ export async function createTeam({
     let res;
 
     if(!is_bot) {
-        res = await axios.post('http://localhost:8080/api/teams', { 
+        res = await axios.post('http://3.20.227.225:8082/api/teams', { 
             teamName: team_name,
             isBot: is_bot, 
             leagueId: league_id,
@@ -52,7 +52,7 @@ export async function createTeam({
         withCredentials: true,
         });
     } else {
-        res = await axios.post('http://localhost:8080/api/bots/teams', { 
+        res = await axios.post('http://3.20.227.225:8082/api/bots/teams', { 
             teamName: team_name,
             leagueId: league_id,
             botId: bot_id,
@@ -103,7 +103,7 @@ export async function getTeamById({
     });
 
     // Backend request
-    const res = await axios.get(`http://localhost:8080/api/teams/${team_id}`, {
+    const res = await axios.get(`http://3.20.227.225:8082/api/teams/${team_id}`, {
         headers: {
             Authorization: `Bearer ${token}`,
         },
@@ -150,7 +150,7 @@ export async function addPlayer({
 
     let res;
 
-    res = await axios.post(`http://localhost:8080/api/teams/${team_id}/add-player`, { 
+    res = await axios.post(`http://3.20.227.225:8082/api/teams/${team_id}/add-player`, { 
         playerApiId: player_api_id
     },
     {
