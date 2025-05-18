@@ -4,6 +4,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/com
 import { Button } from '@/components/ui/button'
 import { useMyTeam } from '@/features/nfl/hook/useMyTeam';
 import { useLeaderboard } from '@/features/nfl/hook/useLeaderboard';
+import { Loader2 } from 'lucide-react';
 
 export const Route = createFileRoute("/(auth)/_auth/")({
   component: Index,

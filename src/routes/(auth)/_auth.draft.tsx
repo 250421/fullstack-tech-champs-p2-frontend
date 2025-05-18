@@ -14,7 +14,7 @@ import { getTeamById } from "@/utils/teamActions";
 import TableRow from "@/components/DraftTable/TableRow";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search } from "lucide-react";
+import { Loader2, Search } from "lucide-react";
 import {
   Select,
   SelectContent,

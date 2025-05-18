@@ -13,7 +13,7 @@ export const Route = createFileRoute('/(auth)/_auth')({
 function RouteComponent() {
   const { data, isLoading } = useAuth();
 
-  if (isLoading_League) {
+  if (isLoading) {
       return (
         <div className="flex justify-center items-center h-64">
           <Loader2 className="h-8 w-8 animate-spin" />
