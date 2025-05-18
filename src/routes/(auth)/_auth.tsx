@@ -15,11 +15,12 @@ function RouteComponent() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center h-screen justify-center">
-        <Loader2 className="size-8 animate-spin" />
+      <div className="flex justify-center items-center h-64">
+        <Loader2 className="h-8 w-8 animate-spin" />
       </div>
     );
   }
+
 
   if (!data?.isAuthenticated) {
     return <Navigate to="/login" />;

@@ -14,7 +14,7 @@ import { getTeamById } from "@/utils/teamActions";
 import TableRow from "@/components/DraftTable/TableRow";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search } from "lucide-react";
+import { Loader2, Search } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -225,7 +225,14 @@ function RouteComponent() {
     }
 
     // while fetching league data, Show loading spinner OR error message
-    if (isLoading_League) return <p className="text-center">Loading draft...</p>;
+    if (isLoading_League) {
+      return (
+        <div className="flex justify-center items-center h-64">
+          <Loader2 className="h-8 w-8 animate-spin" />
+        </div>
+      );
+    }
+
     if (isError_League) return <p className="text-center text-red-500">Failed to load draft.</p>;
 
     let draftNum_prefix = '';
