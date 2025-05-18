@@ -1,18 +1,11 @@
 import { useState } from 'react';
 
 // Hooks
-// import { addPlayer } from '@/utils/teamActions';
+import { addPlayer } from '@/utils/teamActions';
+import { editDraftPick } from '@/utils/draftPickActions';
 
 // Components
 import { Button } from '../ui/button';
-// import {
-//     Dialog,
-//     DialogContent,
-//     DialogHeader,
-//     DialogFooter,
-//     DialogTitle,
-//     DialogTrigger,
-//   } from "@/components/ui/dialog";
 
 type Player = {
     position: string;
@@ -29,6 +22,8 @@ type TableRowProps = {
     draftOver: boolean;
     isBot: boolean;
     currentTeam: any;
+    pickNumber: number;
+    pickedPlayer: string;
     setShowModal_MyPick: (showModal_MyPick: boolean) => void;
     setPickedPlayer: (pickedPlayer: string) => void;
 };
@@ -39,6 +34,8 @@ const TableRow = ({
     draftOver,
     isBot,
     currentTeam,
+    pickNumber,
+    pickedPlayer,
     setShowModal_MyPick,
     setPickedPlayer
 } : TableRowProps) => {
@@ -51,8 +48,7 @@ const TableRow = ({
     const [picked, setPicked] = useState(false);
 
     // Confirmation Modal Logic
-    // const [open, setOpen] = useState(false);
-    // const [loading, setLoading] = useState(false);
+ 
 
     // Handle player selection
     const handlePickPlayer = async (player:any) => {
@@ -61,11 +57,20 @@ const TableRow = ({
         setProcessing(true);
 
         try {
-            // await addPlayer({team_id, player_api_id: player.playerApiId})
+            if(pickedPlayer) {
+                alert(`You already picked ${pickedPlayer}`);
+            } else {
+                if(!picked) {
+                    await addPlayer({team_id, player_api_id: player.playerApiId, position: player.position})
+                    await editDraftPick({pick_number: pickNumber, player_data: player.name})
 
-            setPicked(true);
-            setShowModal_MyPick(true);
-            setPickedPlayer(player.name)
+                    setPicked(true);
+                    setShowModal_MyPick(true);
+                    setPickedPlayer(player.name)
+                } else {
+                    alert('Player not available');
+                }
+            }
         } catch (err) {
             console.error("Error in adding player to team:", err);
         } finally {
@@ -94,7 +99,7 @@ const TableRow = ({
             {(!draftOver && !isBot && currentTeam) && (
                 <div className="col-span-2">
                     <Button
-                        className={`${picked ? 'bg-green-200 hover:bg-green-300' : 'bg-yellow-200 hover:bg-yellow-300'} bg-yellow-200 hover:bg-yellow-300 text-black px-4 py-1 h-8 rounded-md cursor-pointer`}
+                        className={`${picked ? 'bg-green-200 hover:bg-green-300' : 'bg-yellow-200 hover:bg-yellow-300'} text-black px-4 py-1 h-8 rounded-md cursor-pointer`}
                         onClick={() => handlePickPlayer(player)}
                     >
                         {!picked ? processing ? 'Processing...' : 'Pick' : 'Picked'}

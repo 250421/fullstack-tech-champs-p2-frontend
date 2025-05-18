@@ -128,9 +128,11 @@ export async function getTeamById({
 export async function addPlayer({ 
     team_id,
     player_api_id, 
+    position
   }: { 
     team_id: number,
     player_api_id: number; 
+    position: string;
 }) {
     console.log("ABOUT TO ADD PLAYER TO TEAM")
   try {
@@ -145,12 +147,14 @@ export async function addPlayer({
 
     console.log("PASSING THIS: ", { 
         player_api_id,
+        position,
         team_id
     });
 
     let res;
 
     res = await axios.post(`http://3.20.227.225:8082/api/teams/${team_id}/add-player`, { 
+        position,
         playerApiId: player_api_id
     },
     {
