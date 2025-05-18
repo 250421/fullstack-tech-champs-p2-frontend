@@ -55,6 +55,7 @@ export const useMyTeam = (): UseMyTeamReturn => {
     queryFn: async () => {
       if (!userId) throw new Error('User not authenticated');
       const response = await axiosInstance.get(`/api/teams/team1/${userId}`);
+      console.log(response.data);
       return response.data;
     },
     enabled: !!userId,
