@@ -8,7 +8,7 @@ export const fetchAuthStatus = async (): Promise<{ isAuthenticated: boolean; use
 
     console.log("CHECKING AUTH STATUS");
     try {
-        const res = await axios.get('http://localhost:8080/api/users/me', {
+        const res = await axios.get('http://3.20.227.225:8082/api/users/me', {
             headers: {
                 Authorization: `Bearer ${token}`,
             },

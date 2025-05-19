@@ -119,11 +119,11 @@ function RouteComponent() {
 
     const league = leagueData?.league || null;
 
-    console.log("League data here: ", league);
+    // console.log("League data here: ", league);
 
     const user = data?.user || null;
 
-    console.log("USER data here: ", user);
+    // console.log("USER data here: ", user);
 
     // League Data
     const current_pick_number = league?.currentPick || 0;
@@ -175,9 +175,9 @@ function RouteComponent() {
     }, [draftOver]);
 
     useEffect(() => {
-      console.log('Bot picking modal: ', showModal_Bot_Picking);
-      console.log('Draft Over modal: ', showModal_Draft_over);
-      console.log('My Pick modal: ', showModal_MyPick);
+    //   console.log('Bot picking modal: ', showModal_Bot_Picking);
+    //   console.log('Draft Over modal: ', showModal_Draft_over);
+    //   console.log('My Pick modal: ', showModal_MyPick);
     }, [showModal_Bot_Picking, showModal_Draft_over, showModal_MyPick]);
 
     const fetchDraftPick = async (pick_number: number) => {
@@ -219,8 +219,10 @@ function RouteComponent() {
       setPickNumber(nextPickNumber);
 
       try {
+        console.log('ABOUT TO GO INTO EDIT LEAGUE')
         // Update the league Current Pick 
         await editLeague({...league, currentPick: nextPickNumber})
+        console.log('AFTER TO GO INTO EDIT LEAGUE')
 
         // Check if draft is over
         if(nextPickNumber <= total_picks) {

@@ -21,7 +21,6 @@ import { Route as publicPublicLoginImport } from './routes/(public)/_public.logi
 import { Route as authAuthMyTeamPageImport } from './routes/(auth)/_auth.my-team-page'
 import { Route as authAuthMatchHistoryImport } from './routes/(auth)/_auth.match-history'
 import { Route as authAuthLeaderboardImport } from './routes/(auth)/_auth.leaderboard'
-import { Route as authAuthDraftImport } from './routes/(auth)/_auth.draft'
 import { Route as authAuthCreateTeamImport } from './routes/(auth)/_auth.create-team'
 import { Route as authAuthDraftLeagueIdImport } from './routes/(auth)/_auth.draft.$leagueId'
 
@@ -88,12 +87,6 @@ const authAuthLeaderboardRoute = authAuthLeaderboardImport.update({
   getParentRoute: () => authAuthRoute,
 } as any)
 
-const authAuthDraftRoute = authAuthDraftImport.update({
-  id: '/draft',
-  path: '/draft',
-  getParentRoute: () => authAuthRoute,
-} as any)
-
 const authAuthCreateTeamRoute = authAuthCreateTeamImport.update({
   id: '/create-team',
   path: '/create-team',
@@ -143,13 +136,6 @@ declare module '@tanstack/react-router' {
       path: '/create-team'
       fullPath: '/create-team'
       preLoaderRoute: typeof authAuthCreateTeamImport
-      parentRoute: typeof authAuthImport
-    }
-    '/(auth)/_auth/draft': {
-      id: '/(auth)/_auth/draft'
-      path: '/draft'
-      fullPath: '/draft'
-      preLoaderRoute: typeof authAuthDraftImport
       parentRoute: typeof authAuthImport
     }
     '/(auth)/_auth/leaderboard': {
@@ -208,7 +194,6 @@ declare module '@tanstack/react-router' {
 
 interface authAuthRouteChildren {
   authAuthCreateTeamRoute: typeof authAuthCreateTeamRoute
-  authAuthDraftRoute: typeof authAuthDraftRoute
   authAuthLeaderboardRoute: typeof authAuthLeaderboardRoute
   authAuthMatchHistoryRoute: typeof authAuthMatchHistoryRoute
   authAuthMyTeamPageRoute: typeof authAuthMyTeamPageRoute
@@ -218,7 +203,6 @@ interface authAuthRouteChildren {
 
 const authAuthRouteChildren: authAuthRouteChildren = {
   authAuthCreateTeamRoute: authAuthCreateTeamRoute,
-  authAuthDraftRoute: authAuthDraftRoute,
   authAuthLeaderboardRoute: authAuthLeaderboardRoute,
   authAuthMatchHistoryRoute: authAuthMatchHistoryRoute,
   authAuthMyTeamPageRoute: authAuthMyTeamPageRoute,
@@ -268,7 +252,6 @@ const publicRouteWithChildren =
 export interface FileRoutesByFullPath {
   '/': typeof authAuthIndexRoute
   '/create-team': typeof authAuthCreateTeamRoute
-  '/draft': typeof authAuthDraftRoute
   '/leaderboard': typeof authAuthLeaderboardRoute
   '/match-history': typeof authAuthMatchHistoryRoute
   '/my-team-page': typeof authAuthMyTeamPageRoute
@@ -280,7 +263,6 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof authAuthIndexRoute
   '/create-team': typeof authAuthCreateTeamRoute
-  '/draft': typeof authAuthDraftRoute
   '/leaderboard': typeof authAuthLeaderboardRoute
   '/match-history': typeof authAuthMatchHistoryRoute
   '/my-team-page': typeof authAuthMyTeamPageRoute
@@ -296,7 +278,6 @@ export interface FileRoutesById {
   '/(public)': typeof publicRouteWithChildren
   '/(public)/_public': typeof publicPublicRouteWithChildren
   '/(auth)/_auth/create-team': typeof authAuthCreateTeamRoute
-  '/(auth)/_auth/draft': typeof authAuthDraftRoute
   '/(auth)/_auth/leaderboard': typeof authAuthLeaderboardRoute
   '/(auth)/_auth/match-history': typeof authAuthMatchHistoryRoute
   '/(auth)/_auth/my-team-page': typeof authAuthMyTeamPageRoute
@@ -311,7 +292,6 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/create-team'
-    | '/draft'
     | '/leaderboard'
     | '/match-history'
     | '/my-team-page'
@@ -322,7 +302,6 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/create-team'
-    | '/draft'
     | '/leaderboard'
     | '/match-history'
     | '/my-team-page'
@@ -336,7 +315,6 @@ export interface FileRouteTypes {
     | '/(public)'
     | '/(public)/_public'
     | '/(auth)/_auth/create-team'
-    | '/(auth)/_auth/draft'
     | '/(auth)/_auth/leaderboard'
     | '/(auth)/_auth/match-history'
     | '/(auth)/_auth/my-team-page'
@@ -382,7 +360,6 @@ export const routeTree = rootRoute
       "parent": "/(auth)",
       "children": [
         "/(auth)/_auth/create-team",
-        "/(auth)/_auth/draft",
         "/(auth)/_auth/leaderboard",
         "/(auth)/_auth/match-history",
         "/(auth)/_auth/my-team-page",
@@ -406,10 +383,6 @@ export const routeTree = rootRoute
     },
     "/(auth)/_auth/create-team": {
       "filePath": "(auth)/_auth.create-team.tsx",
-      "parent": "/(auth)/_auth"
-    },
-    "/(auth)/_auth/draft": {
-      "filePath": "(auth)/_auth.draft.tsx",
       "parent": "/(auth)/_auth"
     },
     "/(auth)/_auth/leaderboard": {

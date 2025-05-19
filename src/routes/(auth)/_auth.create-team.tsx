@@ -9,6 +9,7 @@ import { editBot, createBot } from "@/utils/botActions";
 import { createTeam } from "@/utils/teamActions";
 import { createLeague } from "@/utils/leagueActions";
 import { createDraftSchedule } from "@/utils/draftPickActions";
+import { useAuth } from "@/hooks/useAuth";
 
 // Components
 import { Button } from "@/components/ui/button";
@@ -28,9 +29,16 @@ export const Route = createFileRoute('/(auth)/_auth/create-team')({
 })
 
 function RouteComponent() {
+
+  const { data, isLoading } = useAuth();
+  
   // State for form data
   const [formData, setFormData] = useState(initialState);
   const [loading, setLoading] = useState(false);
+
+  const user = data?.user || null;
+
+  console.log("USER data here: ", user);
 
   useEffect(() => {
     if(!localStorage.getItem('token')){
@@ -152,7 +160,7 @@ function RouteComponent() {
       const league_id = league_res.id;
 
       // 2. Create user's team
-      const user_id = 1; // TODO: replace with actual ID
+      const user_id = user.userId || 1; // TODO: replace with actual ID
       await createTeam({ 
         team_name, 
         img,
@@ -233,7 +241,7 @@ function RouteComponent() {
             >
               {img ? 'Change Photo' : 'Upload Photo'}
             </Button>
-            {/* Hidden file input for photo selection */}
+            Hidden file input for photo selection
             <input
                 onChange={onChange} 
                 id="img" 
@@ -241,7 +249,7 @@ function RouteComponent() {
                 accept="image/png, image/gif, image/jpeg, image/jpg"
                 hidden
             />
-            {/* Remove img Btn */}
+            Remove img Btn
             {img && (
               <Button 
                 variant="outline" 
@@ -268,7 +276,7 @@ function RouteComponent() {
         </div>
         
         <div>
-          <label htmlFor="num_players" className="block text-lg font-medium mb-2 text-white">Number of bots in League</label>
+          <label htmlFor="num_players" className="block text-lg font-medium mb-2 text-white">Number of players in League (including you)</label>
           <Input 
             id="num_players"
             name="num_players"

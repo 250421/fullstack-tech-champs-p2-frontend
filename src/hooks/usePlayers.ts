@@ -40,8 +40,4 @@ export function usePlayers(searchTerm = '') {
     staleTime: 1000 * 60 * 5,
     refetchOnWindowFocus: false, // avoid refetching every time the user switches tabs
   });
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> ae573e09dbe69ecbf5382d7bd07f4a611b22d9b2
