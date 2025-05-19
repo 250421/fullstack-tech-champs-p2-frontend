@@ -30,7 +30,7 @@ export const Route = createFileRoute('/(auth)/_auth/create-team')({
 
 function RouteComponent() {
 
-  const { data, isLoading } = useAuth();
+  const { data } = useAuth();
   
   // State for form data
   const [formData, setFormData] = useState(initialState);
@@ -50,7 +50,7 @@ function RouteComponent() {
   const { 
     team_name,
     num_players,
-    img
+    // img
   } = formData;
 
   // Function to handle input change

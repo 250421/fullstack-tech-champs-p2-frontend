@@ -6,14 +6,6 @@ import { editDraftPick } from '@/utils/draftPickActions';
 
 // Components
 import { Button } from '../ui/button';
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogFooter,
-    DialogTitle,
-    DialogTrigger,
-  } from "@/components/ui/dialog";
 
 type Player = {
     position: string;
@@ -48,16 +40,9 @@ const TableRow = ({
     setPickedPlayer
 } : TableRowProps) => {
 
-    // Hide component if deleted
-    const [visible, setVisible] = useState(true);
-
     // When player picked show loading
     const [processing, setProcessing] = useState(false);
     const [picked, setPicked] = useState(false);
-
-    // Confirmation Modal Logic
-    const [open, setOpen] = useState(false);
-    const [loading, setLoading] = useState(false);
 
     // Handle player selection
     const handlePickPlayer = async (player:any) => {
@@ -91,7 +76,6 @@ const TableRow = ({
         <div 
             key={player.playerApiId.toString()} 
             className="grid grid-cols-12 border-b py-3 items-center"
-            style={!visible ? {display: 'none'} : {}}
         >
             <div className="col-span-2 text-gray-600">{player.position}</div>
             <div className="col-span-8">
