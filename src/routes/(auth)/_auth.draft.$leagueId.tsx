@@ -8,7 +8,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useGetLeagueById } from "@/hooks/useGetLeagueById";
 import { getDraftPick, editDraftPick } from "@/utils/draftPickActions";
 import { getTeamById } from "@/utils/teamActions";
-import { addPlayer } from "@/utils/teamActions";
+// import { addPlayer } from "@/utils/teamActions";
 import { usePlayers } from "@/hooks/usePlayers";
 import { editLeague } from "@/utils/leagueActions";
 import { botPickPlayer } from "@/utils/botActions";
@@ -16,8 +16,8 @@ import { botPickPlayer } from "@/utils/botActions";
 // Components
 import TableRow from "@/components/DraftTable/TableRow";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Search } from "lucide-react";
+// import { Input } from "@/components/ui/input";
+// import { Search } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -61,14 +61,13 @@ export const Route = createFileRoute('/(auth)/_auth/draft/$leagueId')({
 
 function RouteComponent() {
 
-  const { data, isLoading } = useAuth();
+  const { data } = useAuth();
 
   // -- START: Modals / Pop ups Logic --
 
   const [showModal_MyPick, setShowModal_MyPick] = useState(false);
   const [showModal_Draft_over, setShowModal_DraftOver] = useState(false);
   const [showModal_Bot_Picking, setShowModal_Bot_Picking] = useState(false);
-  const [loading, setLoading] = useState(false);
 
   // -- END: Modals / Pop ups Logic -- 
 
@@ -78,15 +77,15 @@ function RouteComponent() {
     const [positionFilter, setPositionFilter] = useState("All");
 
     // Search Data
-    const [searchQuery, setSearchQuery] = useState("");
-    const [searchTerm, setSearchTerm] = useState('');
-    const [triggeredSearchTerm, setTriggeredSearchTerm] = useState('');
+    // const [searchQuery, setSearchQuery] = useState("");
+    // const [searchTerm, setSearchTerm] = useState('');
+    // const [triggeredSearchTerm, setTriggeredSearchTerm] = useState('');
 
     // Pagination Logic
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 5;
 
-    const { data: playerData, isLoading: isLoading_Players, isError: isError_Players } = usePlayers(triggeredSearchTerm);
+    const { data: playerData, isLoading: isLoading_Players, isError: isError_Players } = usePlayers('');
 
     // -- END: Undrafted Players Logic ---
 
@@ -119,11 +118,11 @@ function RouteComponent() {
 
     const league = leagueData?.league || null;
 
-    // console.log("League data here: ", league);
+    console.log("League data here: ", league);
 
     const user = data?.user || null;
 
-    // console.log("USER data here: ", user);
+    console.log("USER data here: ", user);
 
     // League Data
     const current_pick_number = league?.currentPick || 0;
