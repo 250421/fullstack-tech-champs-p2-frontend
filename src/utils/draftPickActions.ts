@@ -26,7 +26,7 @@ export async function createDraftSchedule({
     // ------------------------
 
     // 1. Get all teams in the league
-    const teamsRes = await axios.get(`http://localhost:8080/api/teams/league/${league_id}`, {
+    const teamsRes = await axios.get(`http://3.20.227.225:8082/api/teams/league/${league_id}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -68,7 +68,7 @@ export async function createDraftSchedule({
       });
 
       pickPromises.push(
-        axios.post(`http://localhost:8080/api/draft_picks`, { 
+        axios.post(`http://3.20.227.225:8082/api/draft_picks`, { 
             leagueId: league_id,
             teamId: team_id,
             pickNumber: pick_number 
@@ -117,7 +117,7 @@ export async function editDraftPick({
         throw new Error('No authentication token found');
     }
 
-    const res = await axios.put(`http://localhost:8080/api/draft_picks/pick-number/${pick_number}`, { 
+    const res = await axios.put(`http://3.20.227.225:8082/api/draft_picks/pick-number/${pick_number}`, { 
         playerData: player_data
     },
     {
@@ -163,7 +163,7 @@ export async function getDraftPick({
     });
 
     // Backend request
-    const res = await axios.get(`http://localhost:8080/api/draft_picks/pick-number/${pick_number}`, {
+    const res = await axios.get(`http://3.20.227.225:8082/api/draft_picks/pick-number/${pick_number}`, {
         headers: {
             Authorization: `Bearer ${token}`,
         },

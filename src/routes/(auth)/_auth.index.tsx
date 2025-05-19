@@ -3,6 +3,8 @@ import { createFileRoute, Navigate, Link } from '@tanstack/react-router'
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { useMyTeam } from '@/features/nfl/hook/useMyTeam';
+import { useLeaderboard } from '@/features/nfl/hook/useLeaderboard';
+import { Loader2 } from 'lucide-react';
 
 export const Route = createFileRoute("/(auth)/_auth/")({
   component: Index,
@@ -15,17 +17,20 @@ function Index() {
     return <Navigate to="/login" />;
   }
 
-  const leaderboard = [
-    { rank: 1, name: "Dragon Warriors", wins: 12, losses: 3 },
-    { rank: 2, name: "Phoenix Flyers", wins: 10, losses: 5 },
-    { rank: 3, name: "Titan Strikers", wins: 9, losses: 6 },
-  ];
+ 
+  const { data: leaderboard} = useLeaderboard();
 
-  const matchHistory = [
-    { opponent: "Phoenix Flyers", result: "Win", score: "3-1", date: "2023-05-15" },
-    { opponent: "Titan Strikers", result: "Loss", score: "1-2", date: "2023-05-10" },
-    { opponent: "Storm Chasers", result: "Win", score: "2-0", date: "2023-05-05" },
-  ];
+  if (isLoading) {
+      return (
+        <div className="flex justify-center items-center h-64">
+          <Loader2 className="h-8 w-8 animate-spin" />
+        </div>
+      );
+    }
+
+const topThreeTeams = leaderboard?.slice(0, 3) || [];
+
+
 
   return (
     <div className="relative min-h-screen w-full">
@@ -42,27 +47,21 @@ function Index() {
         <Card className="bg-gray-800 border-gray-700 hover:border-green-400 transition-colors duration-200">
           <CardHeader>
             <CardTitle className="text-white">Your Teams</CardTitle>
-            
           </CardHeader>
           <CardContent>
             {isLoading ? (
               <p className="text-gray-300">Loading your teams...</p>
             ) : Array.isArray(teams) && teams.length > 0 ? (
               <div className="space-y-6">
-                {teams.map((team) => (
-                  <div key={team.teamId} className="p-4 bg-gray-900 rounded-lg space-y-2">
+                {teams.map((team,index) => (
+                  <div key={team.teamId} className="flex justify-between items-center hover:bg-gray-700 p-2 rounded transition-colors duration-150 border border-white border-1">
                     <div className="flex justify-between items-center">
-                      <h2 className="text-xl font-semibold text-white">{team.teamName}</h2>
-                      {/* <DeleteTeamDialog
-                        onConfirm={() => deleteTeam(team.teamId)}
-                        isDeleting={isDeleting}
-                      /> */}
+                      <h2 className="text-xl font-semibold text-white">{index + 1}. {team.teamName}</h2>
                     </div>
                     <div className="flex gap-6 text-gray-300">
-                      {/* <span className="text-green-400 font-medium">Wins: {team.wins}</span>
-                      <span className="text-red-400 font-medium">Losses: {team.losses}</span> */}
+        
                     </div>
-                    {/* <TeamPlayersCard players={teamToPlayers(team) || []} /> */}
+                    
                   </div>
                 ))}
                     <Button
@@ -95,19 +94,19 @@ function Index() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {leaderboard.map((team) => (
+              {topThreeTeams.map((team, index) => (
                 <div
-                  key={team.rank}
-                  className="flex justify-between items-center hover:bg-gray-700 p-2 rounded transition-colors duration-150"
+                  key={team.teamName}
+                  className="flex justify-between items-center hover:bg-gray-700 p-2 rounded transition-colors duration-150border border-white border-1"
                 >
-                  <span className="font-medium text-white">#{team.rank} {team.name}</span>
-                  <span className="text-sm text-gray-400">{team.wins}W - {team.losses}L</span>
+                  <span className="font-medium text-white">#{index + 1} {team.teamName}</span>
+                  <span className="text-sm text-gray-400">{team.totalFantasyPoints} pts</span>
                 </div>
               ))}
             </div>
             <Button
-              variant="link"
-              className="mt-4 pl-0 text-green-400 hover:text-green-300"
+              variant="outline"
+              className="mt-4 pl-2 text-black bg-green-400 hover:text-green-300"
               asChild
             >
               <Link to="/leaderboard">View Full Leaderboard</Link>
@@ -116,7 +115,7 @@ function Index() {
         </Card>
 
         {/* Match History Card */}
-        <Card className="bg-gray-800 border-gray-700 hover:border-green-400 transition-colors duration-200">
+        {/* <Card className="bg-gray-800 border-gray-700 hover:border-green-400 transition-colors duration-200">
           <CardHeader>
             <CardTitle className="text-white">Your Match History</CardTitle>
             <CardDescription className="text-gray-400">Recent game results</CardDescription>
@@ -146,7 +145,7 @@ function Index() {
               <Link to="/match-history">View Full History</Link>
             </Button>
           </CardContent>
-        </Card>
+        </Card> */}
       </div>
     </div>
   );

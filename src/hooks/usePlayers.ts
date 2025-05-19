@@ -11,7 +11,7 @@ export const fetchUndraftedPlayers = async (searchTerm = ''): Promise<{ players:
 
     console.log("FETCHING PLAYERS", { searchTerm });
     try {
-        const res = await axios.get('http://localhost:8080/api/players/not-drafted', {
+        const res = await axios.get('http://3.20.227.225:8082/api/players/not-drafted', {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
@@ -40,4 +40,8 @@ export function usePlayers(searchTerm = '') {
     staleTime: 1000 * 60 * 5,
     refetchOnWindowFocus: false, // avoid refetching every time the user switches tabs
   });
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> ae573e09dbe69ecbf5382d7bd07f4a611b22d9b2

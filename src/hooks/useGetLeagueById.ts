@@ -11,7 +11,7 @@ export const fetchLeagueById = async (league_id: String): Promise<{ league: any 
 
     console.log("FETCHING LEAGUE BY ID");
     try {
-        const res = await axios.get(`http://localhost:8080/api/leagues/${league_id}`, {
+        const res = await axios.get(`http://3.20.227.225:8082/api/leagues/${league_id}`, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },

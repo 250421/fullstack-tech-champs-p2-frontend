@@ -5,7 +5,7 @@ export async function test() {
     console.log("ABOUT TO TEST BACKED")
   try {
 
-    const res = await axiosInstance.get('http://localhost:8080/api/users/testing');
+    const res = await axiosInstance.get('http://3.20.227.225:8082/api/users/testing');
     console.log("TESTING DATA: ", res.data);
     
     
