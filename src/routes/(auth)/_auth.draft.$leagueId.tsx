@@ -53,9 +53,9 @@ import {
 // 6. increment league current_pick
 // 7. (loop) fetch current team picking (show loading modal)
 
-const TOTAL_POSITIONS = 6;
+const TOTAL_POSITIONS = 5;
 
-export const Route = createFileRoute('/(auth)/_auth/draft')({
+export const Route = createFileRoute('/(auth)/_auth/draft/$leagueId')({
   component: RouteComponent,
 })
 
@@ -94,9 +94,10 @@ function RouteComponent() {
 
     // Get url props
     // const { leagueId } = Route.useLoaderData();
+    const { leagueId } = Route.useParams();
 
     // League Data
-    const { data: leagueData, isLoading: isLoading_League, isError: isError_League } = useGetLeagueById("1");
+    const { data: leagueData, isLoading: isLoading_League, isError: isError_League } = useGetLeagueById(leagueId);
     const [pickNumber, setPickNumber] = useState<number>(0);
 
     // Team Data
@@ -130,7 +131,7 @@ function RouteComponent() {
     const total_picks = num_teams_in_league * TOTAL_POSITIONS;
     // const total_picks = 3;
 
-    if(current_pick_number > total_picks) {
+    if((current_pick_number > total_picks) && !draftOver) {
       setDraftOver(true);
     }
 
@@ -141,6 +142,7 @@ function RouteComponent() {
 
         fetchDraftPick(current_pick_number);
       }
+      console.log('LEAGUE ID FROM PARAMS: ', leagueId)
     }, [current_pick_number, total_picks]);
 
     useEffect(() => {
@@ -385,7 +387,7 @@ function RouteComponent() {
           
           {/* Search Bar */}
           <div className="flex items-center gap-2 border-b pb-4 mb-4">
-            <div className="flex items-center">
+            {/* <div className="flex items-center">
               <Search size={20} className="mr-2" />
             </div>
             <Input
@@ -393,7 +395,7 @@ function RouteComponent() {
               placeholder="Search by name or team"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-            />
+            /> */}
             <Select value={positionFilter} onValueChange={setPositionFilter}>
               <SelectTrigger className="w-24">
                 <SelectValue placeholder="All" />
@@ -405,7 +407,7 @@ function RouteComponent() {
                 <SelectItem value="WR">Wide Recievers</SelectItem>
                 <SelectItem value="TE">Tight Ends</SelectItem>
                 <SelectItem value="K">Kickers</SelectItem>
-                <SelectItem value="DE">Defensive Ends</SelectItem>
+                {/* <SelectItem value="DE">Defensive Ends</SelectItem> */}
               </SelectContent>
             </Select>
           </div>

@@ -197,7 +197,7 @@ function RouteComponent() {
 
       // Start Game
       console.log('Starting Game, Redirecting...');
-      window.location.href = "/draft";
+      window.location.href = `/draft/${league_id}`;
 
     } catch (err) {
       console.error("Error in createDraft:", err);
@@ -211,7 +211,7 @@ function RouteComponent() {
       {/* -- Start: Start of Form -- */}
       
       <div className="space-y-8 max-w-4xl">
-        <div>
+        {/* <div>
           <h2 className="text-lg font-medium mb-4">Add Team Logo</h2>
           <div className="flex">
             <div className="h-24 w-24 rounded-full border flex items-center justify-center overflow-hidden">
@@ -233,7 +233,7 @@ function RouteComponent() {
             >
               {img ? 'Change Photo' : 'Upload Photo'}
             </Button>
-            {/* Hidden file input for photo selection */}
+            Hidden file input for photo selection
             <input
                 onChange={onChange} 
                 id="img" 
@@ -241,7 +241,7 @@ function RouteComponent() {
                 accept="image/png, image/gif, image/jpeg, image/jpg"
                 hidden
             />
-            {/* Remove img Btn */}
+            Remove img Btn
             {img && (
               <Button 
                 variant="outline" 
@@ -253,7 +253,7 @@ function RouteComponent() {
               </Button>
             )}
           </div>
-        </div>
+        </div> */}
         
         <div>
           <label htmlFor="team_name" className="block text-lg font-medium mb-2">Team Name</label>
