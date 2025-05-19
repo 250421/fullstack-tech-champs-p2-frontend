@@ -9,6 +9,7 @@ import { editBot, createBot } from "@/utils/botActions";
 import { createTeam } from "@/utils/teamActions";
 import { createLeague } from "@/utils/leagueActions";
 import { createDraftSchedule } from "@/utils/draftPickActions";
+import { useAuth } from "@/hooks/useAuth";
 
 // Components
 import { Button } from "@/components/ui/button";
@@ -28,9 +29,16 @@ export const Route = createFileRoute('/(auth)/_auth/create-team')({
 })
 
 function RouteComponent() {
+
+  const { data, isLoading } = useAuth();
+  
   // State for form data
   const [formData, setFormData] = useState(initialState);
   const [loading, setLoading] = useState(false);
+
+  const user = data?.user || null;
+
+  console.log("USER data here: ", user);
 
   useEffect(() => {
     if(!localStorage.getItem('token')){
@@ -152,15 +160,15 @@ function RouteComponent() {
       const league_id = league_res.id;
 
       // 2. Create user's team
-      const user_id = 1; // TODO: replace with actual ID
-      const my_team_res  = await createTeam({ 
+      const user_id = user.userId || 1; // TODO: replace with actual ID
+      await createTeam({ 
         team_name, 
         img,
         is_bot: false,
         league_id,
         user_id: user_id
       });
-      my_team_res;
+
       // 3. Create bots, assign team, link team to bot
       const num_bots = num_players - 1;
       const botPromises = [];
@@ -197,7 +205,7 @@ function RouteComponent() {
 
       // Start Game
       console.log('Starting Game, Redirecting...');
-      window.location.href = "/draft";
+      window.location.href = `/draft/${league_id}`;
 
     } catch (err) {
       console.error("Error in createDraft:", err);
@@ -211,7 +219,7 @@ function RouteComponent() {
       {/* -- Start: Start of Form -- */}
       
       <div className="space-y-8 max-w-4xl">
-        <div>
+        {/* <div>
           <h2 className="text-lg font-medium mb-4 text-white">Add Team Logo</h2>
           <div className="flex">
             <div className="h-24 w-24 rounded-full border text-white flex items-center justify-center overflow-hidden">
@@ -233,7 +241,7 @@ function RouteComponent() {
             >
               {img ? 'Change Photo' : 'Upload Photo'}
             </Button>
-            {/* Hidden file input for photo selection */}
+            Hidden file input for photo selection
             <input
                 onChange={onChange} 
                 id="img" 
@@ -241,7 +249,7 @@ function RouteComponent() {
                 accept="image/png, image/gif, image/jpeg, image/jpg"
                 hidden
             />
-            {/* Remove img Btn */}
+            Remove img Btn
             {img && (
               <Button 
                 variant="outline" 
@@ -253,7 +261,7 @@ function RouteComponent() {
               </Button>
             )}
           </div>
-        </div>
+        </div> */}
         
         <div>
           <label htmlFor="team_name" className="block text-lg font-medium mb-2 text-white">Team Name</label>
@@ -268,7 +276,7 @@ function RouteComponent() {
         </div>
         
         <div>
-          <label htmlFor="num_players" className="block text-lg font-medium mb-2 text-white">Number of bots in League</label>
+          <label htmlFor="num_players" className="block text-lg font-medium mb-2 text-white">Number of players in League (including you)</label>
           <Input 
             id="num_players"
             name="num_players"

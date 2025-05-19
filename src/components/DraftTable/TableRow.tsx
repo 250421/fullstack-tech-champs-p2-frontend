@@ -6,6 +6,14 @@ import { editDraftPick } from '@/utils/draftPickActions';
 
 // Components
 import { Button } from '../ui/button';
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogFooter,
+    DialogTitle,
+    DialogTrigger,
+  } from "@/components/ui/dialog";
 
 type Player = {
     position: string;
@@ -41,14 +49,15 @@ const TableRow = ({
 } : TableRowProps) => {
 
     // Hide component if deleted
-    const [visible] = useState(true);
+    const [visible, setVisible] = useState(true);
 
     // When player picked show loading
     const [processing, setProcessing] = useState(false);
     const [picked, setPicked] = useState(false);
 
     // Confirmation Modal Logic
- 
+    const [open, setOpen] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     // Handle player selection
     const handlePickPlayer = async (player:any) => {
